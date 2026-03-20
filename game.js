@@ -2004,6 +2004,15 @@ document.addEventListener('DOMContentLoaded', () => {
   initStars();
   loadGame();
 
+  // Splash screen click — attach here so showScreen is defined
+  const splash = document.getElementById('screen-splash');
+  if (splash) {
+    splash.addEventListener('click', () => {
+      AudioEngine.resume();
+      showScreen('menu');
+    });
+  }
+
   if (GameState.playerName) {
     updateResourceDisplay();
     AudioEngine.startAmbientMusic('calm');
@@ -2045,6 +2054,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // First click anywhere to start audio
   document.addEventListener('click', () => { AudioEngine.resume(); }, { once: true });
+
+  // Register service worker for PWA/offline support
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('sw.js').catch(() => {});
+  }
 
   console.log('🌊 Sea Conqueror v2.0 — Loaded!');
 });
