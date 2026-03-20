@@ -1,0 +1,3027 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SEA CONQUEROR — Denizlerin Efendisi</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Cinzel:wght@400;600;700&family=IM+Fell+English:ital@0;1&family=Uncial+Antiqua&display=swap" rel="stylesheet">
+<style>
+:root {
+  --gold: #c9a227;
+  --gold-light: #f0c040;
+  --gold-dark: #8a6a10;
+  --deep-navy: #0a0e1a;
+  --navy: #0d1b2a;
+  --navy-mid: #1a2a3a;
+  --sea-blue: #1e4060;
+  --sea-light: #2a6080;
+  --red: #8b1a1a;
+  --red-bright: #cc2222;
+  --green: #1a6b2a;
+  --green-bright: #28a042;
+  --wood: #5c3d1e;
+  --wood-light: #8b5e2a;
+  --smoke: rgba(200,200,200,0.15);
+  --text-gold: #e8c84a;
+  --text-parchment: #d4b896;
+  --bg-panel: rgba(8, 14, 26, 0.92);
+  --border-gold: 1px solid rgba(201, 162, 39, 0.5);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: 'Cinzel', serif;
+  background: var(--deep-navy);
+  color: var(--text-parchment);
+  overflow: hidden;
+  width: 100vw;
+  height: 100vh;
+  user-select: none;
+}
+
+/* ===== SCREENS ===== */
+.screen { display: none; width: 100%; height: 100%; position: absolute; top: 0; left: 0; }
+.screen.active { display: flex; }
+
+/* ===== INTRO / SPLASH ===== */
+#screen-splash {
+  background: #000;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+.splash-bg {
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse at 50% 60%, #1a3a5c 0%, #050810 70%);
+}
+.splash-waves {
+  position: absolute; bottom: 0; left: 0; right: 0; height: 45%;
+  background: linear-gradient(180deg, transparent, #0a1e35 40%, #061422 100%);
+  overflow: hidden;
+}
+.splash-waves::before, .splash-waves::after {
+  content: '';
+  position: absolute;
+  width: 200%; height: 60px;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 60'%3E%3Cpath fill='%231a3a5c' fill-opacity='0.4' d='M0,30 C180,60 360,0 540,30 C720,60 900,0 1080,30 C1260,60 1380,20 1440,30 L1440,60 L0,60 Z'/%3E%3C/svg%3E") repeat-x;
+  animation: wave 8s linear infinite;
+}
+.splash-waves::after { animation-duration: 12s; animation-direction: reverse; opacity: 0.5; }
+@keyframes wave { from{transform:translateX(0)} to{transform:translateX(-50%)} }
+
+.splash-ship {
+  position: absolute;
+  bottom: 20%;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 120px;
+  animation: shipBob 4s ease-in-out infinite;
+  filter: drop-shadow(0 0 40px rgba(201,162,39,0.3));
+}
+@keyframes shipBob {
+  0%,100% { transform: translateX(-50%) translateY(0) rotate(-1deg); }
+  50% { transform: translateX(-50%) translateY(-15px) rotate(1deg); }
+}
+
+.splash-title {
+  position: relative; z-index: 10;
+  text-align: center;
+  animation: fadeInDown 1.5s ease;
+}
+.splash-title h1 {
+  font-family: 'Cinzel Decorative', serif;
+  font-size: clamp(36px, 6vw, 80px);
+  font-weight: 900;
+  background: linear-gradient(180deg, #fff8e0 0%, #f0c040 30%, #c9a227 60%, #8a6a10 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: none;
+  letter-spacing: 4px;
+  line-height: 1;
+  filter: drop-shadow(0 4px 20px rgba(201,162,39,0.6));
+}
+.splash-title .subtitle {
+  font-family: 'IM Fell English', serif;
+  font-size: clamp(14px, 2vw, 22px);
+  color: var(--text-parchment);
+  letter-spacing: 8px;
+  margin-top: 12px;
+  opacity: 0.8;
+}
+.splash-version {
+  position: absolute; bottom: 20px; right: 20px;
+  font-size: 11px; color: rgba(201,162,39,0.5);
+  font-family: 'Cinzel', serif;
+}
+.splash-click {
+  position: relative; z-index: 10;
+  margin-top: 60px;
+  font-family: 'IM Fell English', serif;
+  font-style: italic;
+  font-size: 18px;
+  color: var(--gold);
+  animation: pulseText 2s ease-in-out infinite;
+}
+@keyframes pulseText {
+  0%,100% { opacity: 0.4; }
+  50% { opacity: 1; }
+}
+@keyframes fadeInDown {
+  from { opacity: 0; transform: translateY(-40px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Stars */
+.stars {
+  position: absolute; inset: 0; pointer-events: none;
+}
+.star {
+  position: absolute;
+  background: white;
+  border-radius: 50%;
+  animation: twinkle 3s infinite;
+}
+@keyframes twinkle {
+  0%,100% { opacity: 0.3; } 50% { opacity: 1; }
+}
+
+/* ===== MAIN MENU ===== */
+#screen-menu {
+  background: var(--deep-navy);
+  flex-direction: row;
+}
+.menu-bg {
+  position: absolute; inset: 0;
+  background: 
+    radial-gradient(ellipse at 20% 50%, rgba(26,64,96,0.4) 0%, transparent 60%),
+    radial-gradient(ellipse at 80% 30%, rgba(139,26,26,0.15) 0%, transparent 50%),
+    linear-gradient(180deg, #050810 0%, #0a1e35 50%, #050810 100%);
+}
+.menu-ship-bg {
+  position: absolute; right: 0; top: 0; bottom: 0; width: 60%;
+  background: linear-gradient(90deg, var(--deep-navy) 0%, transparent 30%);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 200px;
+  filter: opacity(0.15);
+}
+.menu-left {
+  position: relative; z-index: 10;
+  width: 420px; min-width: 320px;
+  padding: 40px;
+  display: flex; flex-direction: column;
+  justify-content: center;
+}
+.menu-logo {
+  margin-bottom: 50px;
+}
+.menu-logo h1 {
+  font-family: 'Cinzel Decorative', serif;
+  font-size: clamp(22px, 3vw, 38px);
+  font-weight: 900;
+  background: linear-gradient(180deg, #fff8e0 0%, #f0c040 50%, #8a6a10 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  letter-spacing: 2px;
+  line-height: 1.1;
+}
+.menu-logo .sub {
+  font-family: 'IM Fell English', serif;
+  font-size: 13px;
+  color: rgba(201,162,39,0.6);
+  letter-spacing: 5px;
+  margin-top: 6px;
+  font-style: italic;
+}
+
+.menu-nav {
+  display: flex; flex-direction: column; gap: 8px;
+}
+.menu-btn {
+  background: linear-gradient(135deg, rgba(201,162,39,0.1) 0%, rgba(201,162,39,0.05) 100%);
+  border: 1px solid rgba(201,162,39,0.3);
+  color: var(--text-parchment);
+  font-family: 'Cinzel', serif;
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 2px;
+  padding: 14px 24px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-align: left;
+  position: relative;
+  overflow: hidden;
+  display: flex; align-items: center; gap: 14px;
+}
+.menu-btn::before {
+  content: '';
+  position: absolute; left: 0; top: 0; bottom: 0;
+  width: 3px;
+  background: var(--gold);
+  transform: scaleY(0);
+  transition: transform 0.3s;
+  transform-origin: bottom;
+}
+.menu-btn:hover {
+  background: linear-gradient(135deg, rgba(201,162,39,0.2) 0%, rgba(201,162,39,0.08) 100%);
+  border-color: rgba(201,162,39,0.7);
+  color: var(--gold-light);
+  transform: translateX(6px);
+}
+.menu-btn:hover::before { transform: scaleY(1); }
+.menu-btn .btn-icon { font-size: 22px; }
+.menu-btn.primary {
+  background: linear-gradient(135deg, rgba(201,162,39,0.25) 0%, rgba(201,162,39,0.1) 100%);
+  border-color: var(--gold);
+  font-size: 17px;
+  padding: 18px 24px;
+}
+.menu-btn.primary:hover {
+  background: linear-gradient(135deg, rgba(201,162,39,0.4) 0%, rgba(201,162,39,0.15) 100%);
+  box-shadow: 0 0 30px rgba(201,162,39,0.2);
+}
+
+.menu-divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(201,162,39,0.3), transparent);
+  margin: 8px 0;
+}
+
+/* Daily reward indicator */
+.daily-badge {
+  background: var(--red-bright);
+  color: white;
+  font-size: 10px;
+  padding: 2px 7px;
+  border-radius: 10px;
+  margin-left: auto;
+  animation: pulse 2s infinite;
+}
+@keyframes pulse { 0%,100% { box-shadow: 0 0 0 0 rgba(204,34,34,0.7); } 70% { box-shadow: 0 0 0 8px rgba(204,34,34,0); } }
+
+/* ===== NAME SELECTION ===== */
+#screen-name {
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(ellipse at center, #0d1b2a 0%, #050810 100%);
+}
+.name-card {
+  background: linear-gradient(135deg, rgba(8,14,26,0.98) 0%, rgba(13,27,42,0.95) 100%);
+  border: 1px solid rgba(201,162,39,0.5);
+  border-radius: 4px;
+  padding: 48px;
+  width: 480px;
+  max-width: 90vw;
+  text-align: center;
+  position: relative;
+  box-shadow: 0 0 80px rgba(201,162,39,0.1), inset 0 1px 0 rgba(201,162,39,0.2);
+}
+.name-card::before {
+  content: '⚓';
+  position: absolute;
+  top: -24px; left: 50%;
+  transform: translateX(-50%);
+  font-size: 40px;
+  background: var(--deep-navy);
+  padding: 0 12px;
+}
+.name-card h2 {
+  font-family: 'Cinzel Decorative', serif;
+  font-size: 24px;
+  color: var(--gold-light);
+  margin-bottom: 10px;
+}
+.name-card p {
+  font-family: 'IM Fell English', serif;
+  font-style: italic;
+  font-size: 14px;
+  color: rgba(212,184,150,0.7);
+  margin-bottom: 32px;
+}
+.name-input {
+  width: 100%;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(201,162,39,0.4);
+  border-radius: 2px;
+  color: var(--gold-light);
+  font-family: 'Cinzel', serif;
+  font-size: 20px;
+  font-weight: 600;
+  letter-spacing: 3px;
+  padding: 14px 20px;
+  text-align: center;
+  outline: none;
+  transition: all 0.3s;
+}
+.name-input:focus {
+  border-color: var(--gold);
+  box-shadow: 0 0 20px rgba(201,162,39,0.15);
+  background: rgba(201,162,39,0.05);
+}
+.name-status {
+  font-family: 'IM Fell English', serif;
+  font-size: 13px;
+  margin: 10px 0;
+  height: 18px;
+}
+.name-status.ok { color: var(--green-bright); }
+.name-status.err { color: var(--red-bright); }
+.confirm-btn {
+  margin-top: 20px;
+  width: 100%;
+  padding: 16px;
+  background: linear-gradient(135deg, #c9a227 0%, #8a6a10 100%);
+  border: none;
+  color: #0a0e1a;
+  font-family: 'Cinzel', serif;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 3px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+.confirm-btn:hover {
+  background: linear-gradient(135deg, #f0c040 0%, #c9a227 100%);
+  box-shadow: 0 0 30px rgba(201,162,39,0.3);
+}
+
+/* ===== GAME HUB (Main World Map) ===== */
+#screen-hub {
+  flex-direction: column;
+  background: linear-gradient(180deg, #0a1620 0%, #061220 100%);
+}
+.hub-header {
+  height: 60px;
+  background: linear-gradient(90deg, rgba(8,14,26,0.98) 0%, rgba(13,27,42,0.95) 100%);
+  border-bottom: 1px solid rgba(201,162,39,0.3);
+  display: flex; align-items: center;
+  padding: 0 20px; gap: 20px;
+  flex-shrink: 0;
+}
+.hub-player-info {
+  display: flex; align-items: center; gap: 12px;
+}
+.hub-avatar {
+  width: 42px; height: 42px;
+  background: linear-gradient(135deg, var(--sea-blue), var(--navy-mid));
+  border: 2px solid var(--gold);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px;
+}
+.hub-name { font-size: 14px; font-weight: 700; color: var(--gold-light); }
+.hub-level {
+  font-size: 11px; color: var(--text-parchment);
+  display: flex; align-items: center; gap: 6px;
+}
+.exp-bar-mini {
+  width: 80px; height: 4px;
+  background: rgba(255,255,255,0.1);
+  border-radius: 2px;
+  overflow: hidden;
+}
+.exp-fill-mini {
+  height: 100%;
+  background: linear-gradient(90deg, var(--gold-dark), var(--gold-light));
+  border-radius: 2px;
+  transition: width 0.5s;
+}
+.hub-resources {
+  display: flex; gap: 16px; margin-left: auto;
+}
+.resource-chip {
+  display: flex; align-items: center; gap: 6px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(201,162,39,0.2);
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 13px; font-weight: 700;
+}
+.resource-chip .icon { font-size: 16px; }
+.hub-header-btns {
+  display: flex; gap: 8px;
+}
+.hdr-btn {
+  width: 38px; height: 38px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(201,162,39,0.25);
+  color: var(--gold);
+  font-size: 18px;
+  cursor: pointer;
+  border-radius: 4px;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.2s;
+  position: relative;
+}
+.hdr-btn:hover { background: rgba(201,162,39,0.15); border-color: var(--gold); }
+.notif-dot {
+  position: absolute; top: 4px; right: 4px;
+  width: 8px; height: 8px;
+  background: var(--red-bright);
+  border-radius: 50%;
+}
+
+/* Hub content */
+.hub-content {
+  flex: 1;
+  display: flex;
+  overflow: hidden;
+}
+.hub-sidebar {
+  width: 240px;
+  background: rgba(8,14,26,0.95);
+  border-right: 1px solid rgba(201,162,39,0.2);
+  display: flex; flex-direction: column;
+  padding: 16px;
+  gap: 8px;
+  overflow-y: auto;
+}
+.hub-sidebar-title {
+  font-size: 10px;
+  letter-spacing: 3px;
+  color: rgba(201,162,39,0.5);
+  margin: 8px 0 4px;
+  text-transform: uppercase;
+}
+.sidebar-nav-btn {
+  display: flex; align-items: center; gap: 10px;
+  padding: 11px 14px;
+  background: transparent;
+  border: 1px solid transparent;
+  color: var(--text-parchment);
+  font-family: 'Cinzel', serif;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  cursor: pointer;
+  border-radius: 3px;
+  transition: all 0.2s;
+  text-align: left;
+  width: 100%;
+}
+.sidebar-nav-btn:hover {
+  background: rgba(201,162,39,0.08);
+  border-color: rgba(201,162,39,0.3);
+  color: var(--gold-light);
+}
+.sidebar-nav-btn.active {
+  background: rgba(201,162,39,0.12);
+  border-color: rgba(201,162,39,0.5);
+  color: var(--gold-light);
+}
+.sidebar-nav-btn .s-icon { font-size: 18px; }
+
+.hub-main {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px;
+  display: flex; flex-direction: column; gap: 16px;
+}
+
+/* ===== PANELS (shared) ===== */
+.panel {
+  background: rgba(8,14,26,0.92);
+  border: 1px solid rgba(201,162,39,0.25);
+  border-radius: 4px;
+  overflow: hidden;
+}
+.panel-header {
+  background: linear-gradient(90deg, rgba(201,162,39,0.12) 0%, transparent 100%);
+  border-bottom: 1px solid rgba(201,162,39,0.2);
+  padding: 12px 16px;
+  display: flex; align-items: center; gap: 10px;
+}
+.panel-header h3 {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  color: var(--gold-light);
+}
+.panel-body { padding: 16px; }
+
+/* ===== WELCOME PANEL ===== */
+.welcome-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 12px;
+}
+.action-card {
+  background: linear-gradient(135deg, rgba(30,64,96,0.3) 0%, rgba(13,27,42,0.5) 100%);
+  border: 1px solid rgba(201,162,39,0.2);
+  padding: 20px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s;
+  border-radius: 4px;
+}
+.action-card:hover {
+  border-color: var(--gold);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 30px rgba(201,162,39,0.15);
+}
+.action-card .ac-icon { font-size: 42px; display: block; margin-bottom: 10px; }
+.action-card .ac-title {
+  font-size: 13px; font-weight: 700; color: var(--gold-light);
+  letter-spacing: 1px; margin-bottom: 4px;
+}
+.action-card .ac-sub {
+  font-family: 'IM Fell English', serif;
+  font-style: italic;
+  font-size: 12px;
+  color: rgba(212,184,150,0.6);
+}
+
+/* ===== QUEST PANEL ===== */
+.quest-list { display: flex; flex-direction: column; gap: 8px; }
+.quest-item {
+  display: flex; align-items: center; gap: 12px;
+  padding: 12px 16px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 3px;
+  transition: all 0.2s;
+}
+.quest-item:hover { border-color: rgba(201,162,39,0.3); }
+.quest-item.completed { border-color: rgba(40,160,66,0.4); background: rgba(40,160,66,0.05); }
+.quest-item.claimed { opacity: 0.5; }
+.quest-icon { font-size: 24px; flex-shrink: 0; }
+.quest-info { flex: 1; }
+.quest-name { font-size: 13px; font-weight: 600; color: var(--text-parchment); margin-bottom: 4px; }
+.quest-progress-bar {
+  height: 4px;
+  background: rgba(255,255,255,0.1);
+  border-radius: 2px;
+  overflow: hidden;
+  margin-top: 4px;
+}
+.quest-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--sea-light), var(--gold));
+  border-radius: 2px;
+  transition: width 0.5s;
+}
+.quest-rewards {
+  display: flex; gap: 8px; align-items: center;
+  font-size: 12px;
+}
+.reward-tag {
+  background: rgba(201,162,39,0.1);
+  border: 1px solid rgba(201,162,39,0.3);
+  padding: 3px 8px;
+  border-radius: 10px;
+  font-size: 11px;
+}
+.collect-btn {
+  padding: 6px 14px;
+  background: linear-gradient(135deg, #28a042, #1a6b2a);
+  border: 1px solid var(--green-bright);
+  color: white;
+  font-family: 'Cinzel', serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  cursor: pointer;
+  border-radius: 2px;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+.collect-btn:hover { background: linear-gradient(135deg, #34c055, #28a042); box-shadow: 0 0 15px rgba(40,160,66,0.3); }
+.collect-all-btn {
+  padding: 10px 20px;
+  background: linear-gradient(135deg, rgba(40,160,66,0.2), rgba(26,107,42,0.2));
+  border: 1px solid var(--green-bright);
+  color: var(--green-bright);
+  font-family: 'Cinzel', serif;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  cursor: pointer;
+  border-radius: 2px;
+  transition: all 0.3s;
+  width: 100%;
+  margin-bottom: 12px;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+}
+.collect-all-btn:hover {
+  background: linear-gradient(135deg, rgba(40,160,66,0.35), rgba(26,107,42,0.3));
+  box-shadow: 0 0 20px rgba(40,160,66,0.2);
+}
+
+/* ===== SHIP PANEL ===== */
+.ship-display {
+  display: flex; gap: 20px; align-items: flex-start;
+}
+.ship-visual-area {
+  width: 280px; height: 200px;
+  background: linear-gradient(180deg, #0d2a4a 0%, #061422 100%);
+  border: 1px solid rgba(201,162,39,0.2);
+  border-radius: 4px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 80px;
+  position: relative;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+.ship-sea {
+  position: absolute; bottom: 0; left: 0; right: 0; height: 40%;
+  background: linear-gradient(180deg, rgba(26,64,96,0.5) 0%, rgba(10,30,50,0.8) 100%);
+}
+.ship-emoji { position: relative; z-index: 2; animation: shipBobSmall 3s ease-in-out infinite; }
+@keyframes shipBobSmall {
+  0%,100% { transform: translateY(0) rotate(-1deg); }
+  50% { transform: translateY(-8px) rotate(1deg); }
+}
+.ship-upgrades {
+  display: flex; flex-direction: column; gap: 6px; flex: 1;
+}
+.upgrade-row {
+  display: flex; align-items: center; gap: 10px;
+}
+.upgrade-label {
+  font-size: 11px; color: rgba(212,184,150,0.6);
+  width: 80px; letter-spacing: 1px;
+}
+.upgrade-bar {
+  flex: 1; height: 8px;
+  background: rgba(255,255,255,0.08);
+  border-radius: 4px;
+  overflow: hidden;
+}
+.upgrade-fill {
+  height: 100%;
+  border-radius: 4px;
+  transition: width 0.8s ease;
+}
+.upgrade-fill.cannon { background: linear-gradient(90deg, #8b1a1a, #cc2222); }
+.upgrade-fill.hull { background: linear-gradient(90deg, #1a4a6b, #2a7aab); }
+.upgrade-fill.sail { background: linear-gradient(90deg, #4a6a8a, #8aaac0); }
+.upgrade-fill.crew { background: linear-gradient(90deg, #4a6a1a, #8aaa2a); }
+.upgrade-val { font-size: 11px; color: var(--gold); width: 30px; text-align: right; }
+
+/* ===== BATTLE SCREEN ===== */
+#screen-battle {
+  flex-direction: column;
+  background: #061220;
+}
+.battle-scene {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(180deg, #0d2a4a 0%, #0a1e35 40%, #0d2a4a 100%);
+}
+/* Animated sea */
+.sea-layer {
+  position: absolute; bottom: 0; left: 0; right: 0;
+  height: 45%;
+}
+.sea-layer::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: linear-gradient(180deg, rgba(30,64,96,0.6) 0%, rgba(10,30,50,0.9) 100%);
+}
+.wave-row {
+  position: absolute;
+  width: 200%; height: 30px;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 30'%3E%3Cpath fill='%231e4060' fill-opacity='0.5' d='M0,15 C180,30 360,0 540,15 C720,30 900,0 1080,15 C1260,30 1380,10 1440,15 L1440,30 L0,30 Z'/%3E%3C/svg%3E") repeat-x;
+}
+.wave-row:nth-child(1) { bottom: 60%; animation: wave 6s linear infinite; }
+.wave-row:nth-child(2) { bottom: 40%; animation: wave 9s linear infinite reverse; opacity: 0.5; }
+.wave-row:nth-child(3) { bottom: 20%; animation: wave 12s linear infinite; opacity: 0.3; }
+
+/* Player ship */
+.player-ship-battle {
+  position: absolute;
+  bottom: 30%; left: 15%;
+  font-size: 80px;
+  animation: shipBobBattle 3s ease-in-out infinite;
+  filter: drop-shadow(0 10px 20px rgba(0,0,0,0.5));
+  cursor: default;
+  transition: left 0.3s, bottom 0.3s;
+}
+@keyframes shipBobBattle {
+  0%,100% { transform: translateY(0) rotate(-1deg) scaleX(-1); }
+  50% { transform: translateY(-10px) rotate(1deg) scaleX(-1); }
+}
+.enemy-ship-battle {
+  position: absolute;
+  bottom: 30%; right: 15%;
+  font-size: 70px;
+  animation: enemyBob 3.5s ease-in-out infinite;
+  filter: drop-shadow(0 0 15px rgba(204,34,34,0.4));
+}
+@keyframes enemyBob {
+  0%,100% { transform: translateY(0) rotate(1deg); }
+  50% { transform: translateY(-8px) rotate(-1deg); }
+}
+
+/* HUD */
+.battle-hud {
+  position: absolute; inset: 0;
+  pointer-events: none;
+  display: flex; flex-direction: column;
+}
+.hud-top {
+  display: flex; justify-content: space-between; align-items: flex-start;
+  padding: 12px;
+}
+.health-panel {
+  background: rgba(8,14,26,0.85);
+  border: 1px solid rgba(201,162,39,0.4);
+  padding: 8px 14px;
+  min-width: 200px;
+  pointer-events: all;
+}
+.hp-label { font-size: 10px; color: rgba(201,162,39,0.7); letter-spacing: 2px; margin-bottom: 6px; display: flex; align-items: center; gap: 6px; }
+.hp-bar {
+  height: 10px; background: rgba(0,0,0,0.5); border-radius: 1px;
+  border: 1px solid rgba(255,255,255,0.1);
+  overflow: hidden; margin-bottom: 3px;
+}
+.hp-fill {
+  height: 100%; border-radius: 1px;
+  transition: width 0.5s ease;
+}
+.hp-fill.player { background: linear-gradient(90deg, #1a6b2a, #28a042); }
+.hp-fill.enemy { background: linear-gradient(90deg, #8b1a1a, #cc2222); }
+.hp-text { font-size: 11px; text-align: right; color: var(--text-parchment); }
+
+.minimap {
+  width: 120px; height: 120px;
+  background: rgba(8,14,26,0.85);
+  border: 1px solid rgba(201,162,39,0.4);
+  border-radius: 50%;
+  overflow: hidden;
+  position: relative;
+  pointer-events: all;
+}
+.minimap-inner {
+  width: 100%; height: 100%;
+  background: radial-gradient(circle, rgba(30,64,96,0.8) 0%, rgba(10,30,50,0.9) 100%);
+  display: flex; align-items: center; justify-content: center;
+  position: relative;
+}
+.mm-player { position: absolute; font-size: 16px; color: #28a042; text-shadow: 0 0 8px #28a042; }
+.mm-enemy { position: absolute; font-size: 14px; color: var(--red-bright); text-shadow: 0 0 8px var(--red-bright); }
+
+.hud-bottom {
+  margin-top: auto;
+  display: flex; align-items: flex-end;
+  padding: 12px;
+  pointer-events: all;
+}
+.ammo-panel {
+  background: rgba(8,14,26,0.9);
+  border: 1px solid rgba(201,162,39,0.4);
+  padding: 10px 16px;
+  flex: 1;
+}
+.ammo-label { font-size: 9px; letter-spacing: 3px; color: rgba(201,162,39,0.6); margin-bottom: 8px; }
+.ammo-slots {
+  display: flex; gap: 8px;
+}
+.ammo-slot {
+  width: 56px; height: 56px;
+  background: rgba(255,255,255,0.05);
+  border: 2px solid rgba(255,255,255,0.1);
+  border-radius: 3px;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 20px;
+}
+.ammo-slot:hover { border-color: rgba(201,162,39,0.5); background: rgba(201,162,39,0.08); }
+.ammo-slot.selected { border-color: var(--gold); background: rgba(201,162,39,0.15); box-shadow: 0 0 15px rgba(201,162,39,0.2); }
+.ammo-slot .aname { font-size: 8px; color: rgba(212,184,150,0.7); letter-spacing: 0.5px; margin-top: 2px; }
+
+.fire-btn {
+  width: 80px; height: 80px;
+  background: radial-gradient(circle at 40% 35%, #e03030, #8b1a1a);
+  border: 3px solid #cc2222;
+  border-radius: 50%;
+  color: white;
+  font-family: 'Cinzel', serif;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  cursor: pointer;
+  transition: all 0.1s;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 2px;
+  box-shadow: 0 4px 20px rgba(139,26,26,0.6), inset 0 2px 0 rgba(255,255,255,0.2);
+  pointer-events: all;
+  margin-left: 16px;
+}
+.fire-btn:hover { transform: scale(1.05); box-shadow: 0 6px 30px rgba(204,34,34,0.7); }
+.fire-btn:active { transform: scale(0.95); box-shadow: 0 2px 10px rgba(139,26,26,0.5); }
+.fire-btn .f-icon { font-size: 24px; }
+
+.sail-ctrl {
+  display: flex; flex-direction: column; align-items: center;
+  margin-left: 12px;
+  pointer-events: all;
+}
+.sail-label { font-size: 9px; color: rgba(201,162,39,0.7); letter-spacing: 2px; margin-bottom: 6px; }
+.sail-slider {
+  -webkit-appearance: none;
+  width: 8px; height: 140px;
+  writing-mode: vertical-lr;
+  direction: rtl;
+  background: linear-gradient(180deg, rgba(201,162,39,0.3) 0%, rgba(201,162,39,0.05) 100%);
+  border: 1px solid rgba(201,162,39,0.3);
+  outline: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.sail-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 20px; height: 12px;
+  background: linear-gradient(135deg, var(--gold-light), var(--gold-dark));
+  border-radius: 2px;
+  cursor: grab;
+}
+
+/* Weather overlay */
+.weather-overlay {
+  position: absolute; inset: 0;
+  pointer-events: none;
+  transition: all 1s ease;
+}
+.weather-overlay.storm {
+  background: radial-gradient(ellipse at center, rgba(0,0,30,0.6) 0%, rgba(0,0,15,0.8) 100%);
+}
+.weather-overlay.fog {
+  background: rgba(180,190,200,0.3);
+}
+.lightning {
+  position: absolute; top: 0; left: 30%;
+  width: 4px; height: 60%;
+  background: linear-gradient(180deg, #fff, #aaccff, transparent);
+  clip-path: polygon(40% 0%, 100% 40%, 60% 40%, 100% 100%, 0% 60%, 40% 60%, 0% 0%);
+  opacity: 0;
+  animation: lightning 6s infinite;
+}
+@keyframes lightning {
+  0%,94%,96%,100% { opacity: 0; }
+  95% { opacity: 1; }
+}
+.rain-container {
+  position: absolute; inset: 0;
+  overflow: hidden;
+  opacity: 0;
+  transition: opacity 1s;
+}
+.rain-container.active { opacity: 1; }
+.raindrop {
+  position: absolute; top: -20px;
+  width: 1px; height: 15px;
+  background: linear-gradient(180deg, transparent, rgba(174,214,241,0.6));
+  animation: rain linear infinite;
+}
+@keyframes rain { to { transform: translateY(110vh); } }
+
+/* Projectile */
+.projectile {
+  position: absolute;
+  font-size: 14px;
+  z-index: 20;
+  transition: all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+.explosion {
+  position: absolute;
+  font-size: 48px;
+  z-index: 25;
+  animation: explode 0.8s ease-out forwards;
+}
+@keyframes explode {
+  0% { transform: scale(0); opacity: 1; }
+  50% { transform: scale(1.5); opacity: 0.9; }
+  100% { transform: scale(2); opacity: 0; }
+}
+
+/* Boss health bar */
+.boss-bar {
+  background: rgba(8,14,26,0.9);
+  border: 1px solid rgba(139,26,26,0.6);
+  padding: 8px 16px;
+  text-align: center;
+  pointer-events: all;
+}
+.boss-name { font-size: 10px; letter-spacing: 3px; color: var(--red-bright); margin-bottom: 6px; }
+.boss-hp-bar { height: 12px; background: rgba(0,0,0,0.5); border-radius: 1px; overflow: hidden; }
+.boss-hp-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #8b1a1a, #cc2222, #ff4444);
+  border-radius: 1px;
+  transition: width 0.5s;
+  position: relative;
+}
+.boss-hp-fill::after {
+  content: '';
+  position: absolute; top: 0; right: 0;
+  width: 20px; height: 100%;
+  background: rgba(255,255,255,0.3);
+  animation: bossGlow 1s ease-in-out infinite;
+}
+@keyframes bossGlow { 0%,100% { opacity: 0; } 50% { opacity: 1; } }
+
+/* Quest tracker overlay */
+.quest-tracker {
+  position: absolute; top: 60px; left: 50%; transform: translateX(-50%);
+  background: rgba(8,14,26,0.85);
+  border: 1px solid rgba(201,162,39,0.4);
+  padding: 8px 20px;
+  text-align: center;
+  min-width: 280px;
+}
+.qt-title { font-size: 10px; color: var(--gold); letter-spacing: 2px; margin-bottom: 4px; }
+.qt-text { font-family: 'IM Fell English', serif; font-size: 14px; }
+
+/* Damage numbers */
+.dmg-num {
+  position: absolute;
+  font-family: 'Cinzel', serif;
+  font-size: 20px;
+  font-weight: 900;
+  pointer-events: none;
+  z-index: 30;
+  animation: dmgFloat 1.5s ease-out forwards;
+}
+.dmg-num.player-dmg { color: #ff6666; text-shadow: 0 0 10px rgba(255,100,100,0.8); }
+.dmg-num.enemy-dmg { color: #66ff88; text-shadow: 0 0 10px rgba(100,255,136,0.8); }
+@keyframes dmgFloat {
+  0% { transform: translateY(0) scale(1); opacity: 1; }
+  100% { transform: translateY(-60px) scale(0.7); opacity: 0; }
+}
+
+/* ===== UPGRADE SCREEN ===== */
+#screen-upgrade {
+  flex-direction: column;
+  background: linear-gradient(180deg, #050e1a 0%, #0a1825 100%);
+}
+.upgrade-layout {
+  display: flex; flex: 1; overflow: hidden;
+}
+.upgrade-categories {
+  width: 200px;
+  background: rgba(8,14,26,0.95);
+  border-right: 1px solid rgba(201,162,39,0.2);
+  padding: 16px;
+  display: flex; flex-direction: column; gap: 6px;
+}
+.upg-cat-btn {
+  display: flex; flex-direction: column; align-items: center;
+  gap: 6px; padding: 14px 8px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 4px;
+  color: var(--text-parchment);
+  font-family: 'Cinzel', serif;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.upg-cat-btn .cat-icon { font-size: 28px; }
+.upg-cat-btn.active, .upg-cat-btn:hover {
+  background: rgba(201,162,39,0.1);
+  border-color: rgba(201,162,39,0.5);
+  color: var(--gold-light);
+}
+.upgrade-items {
+  flex: 1;
+  padding: 20px;
+  overflow-y: auto;
+  display: flex; flex-direction: column; gap: 10px;
+}
+.upgrade-item-card {
+  display: flex; align-items: center; gap: 16px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.08);
+  padding: 14px 16px;
+  border-radius: 3px;
+  transition: all 0.2s;
+}
+.upgrade-item-card:hover { border-color: rgba(201,162,39,0.3); }
+.upgrade-item-card.maxed { border-color: rgba(201,162,39,0.5); background: rgba(201,162,39,0.05); }
+.upg-icon { font-size: 32px; flex-shrink: 0; }
+.upg-details { flex: 1; }
+.upg-name { font-size: 13px; font-weight: 700; color: var(--text-parchment); margin-bottom: 4px; }
+.upg-desc { font-family: 'IM Fell English', serif; font-style: italic; font-size: 12px; color: rgba(212,184,150,0.6); margin-bottom: 8px; }
+.upg-bonus { font-size: 11px; color: var(--green-bright); font-weight: 600; }
+.upg-bonus.neg { color: var(--red-bright); }
+.upg-level-dots { display: flex; gap: 4px; margin-top: 6px; }
+.level-dot {
+  width: 12px; height: 12px;
+  border-radius: 50%;
+  border: 1px solid rgba(201,162,39,0.3);
+  background: transparent;
+  transition: all 0.3s;
+}
+.level-dot.filled { background: var(--gold); border-color: var(--gold-light); box-shadow: 0 0 6px rgba(201,162,39,0.5); }
+.upg-buy-btn {
+  padding: 10px 18px;
+  background: linear-gradient(135deg, rgba(201,162,39,0.2), rgba(201,162,39,0.05));
+  border: 1px solid rgba(201,162,39,0.5);
+  color: var(--gold-light);
+  font-family: 'Cinzel', serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  cursor: pointer;
+  border-radius: 2px;
+  transition: all 0.2s;
+  text-align: center;
+  min-width: 90px;
+}
+.upg-buy-btn:hover {
+  background: linear-gradient(135deg, rgba(201,162,39,0.35), rgba(201,162,39,0.15));
+  box-shadow: 0 0 15px rgba(201,162,39,0.2);
+}
+.upg-buy-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+.upg-buy-btn.maxed-btn {
+  background: linear-gradient(135deg, rgba(201,162,39,0.3), rgba(201,162,39,0.1));
+  cursor: default;
+  color: var(--gold);
+}
+.ship-preview-right {
+  width: 280px;
+  background: rgba(5,14,26,0.98);
+  border-left: 1px solid rgba(201,162,39,0.2);
+  padding: 20px;
+  display: flex; flex-direction: column; gap: 16px;
+}
+.ship-3d-view {
+  height: 200px;
+  background: linear-gradient(180deg, #0d2a4a 0%, #061422 100%);
+  border: 1px solid rgba(201,162,39,0.2);
+  border-radius: 4px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 80px;
+  position: relative; overflow: hidden;
+}
+.ship-stats-list { display: flex; flex-direction: column; gap: 8px; }
+.stat-row {
+  display: flex; align-items: center; gap: 8px;
+}
+.stat-icon { font-size: 14px; width: 20px; text-align: center; }
+.stat-name { font-size: 11px; color: rgba(212,184,150,0.6); width: 70px; }
+.stat-bar { flex: 1; height: 6px; background: rgba(255,255,255,0.08); border-radius: 3px; overflow: hidden; }
+.stat-fill { height: 100%; border-radius: 3px; transition: width 0.6s ease; }
+.stat-val { font-size: 11px; color: var(--gold); width: 30px; text-align: right; font-weight: 700; }
+
+/* ===== ARENA ===== */
+#screen-arena {
+  flex-direction: column;
+  background: #061220;
+}
+.arena-header {
+  background: rgba(8,14,26,0.95);
+  border-bottom: 1px solid rgba(139,26,26,0.4);
+  padding: 10px 20px;
+  display: flex; align-items: center; gap: 16px;
+}
+.arena-title-text {
+  font-family: 'Cinzel Decorative', serif;
+  font-size: 18px;
+  color: var(--red-bright);
+  letter-spacing: 3px;
+}
+.wave-indicator {
+  background: rgba(139,26,26,0.2);
+  border: 1px solid rgba(139,26,26,0.5);
+  padding: 4px 14px;
+  font-size: 12px;
+  color: var(--red-bright);
+  letter-spacing: 2px;
+}
+.arena-loot-counter {
+  margin-left: auto;
+  display: flex; gap: 12px;
+}
+.arena-exit-btn {
+  padding: 8px 16px;
+  background: rgba(139,26,26,0.2);
+  border: 1px solid rgba(139,26,26,0.5);
+  color: var(--red-bright);
+  font-family: 'Cinzel', serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.arena-exit-btn:hover { background: rgba(139,26,26,0.35); box-shadow: 0 0 15px rgba(204,34,34,0.2); }
+
+/* ===== TREASURE HUNT ===== */
+#screen-treasure {
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(ellipse at center, #1a0e05 0%, #0a0505 100%);
+}
+.treasure-container {
+  background: rgba(20,12,4,0.95);
+  border: 2px solid rgba(201,162,39,0.5);
+  padding: 30px;
+  max-width: 560px;
+  width: 90%;
+}
+.treasure-header-area {
+  text-align: center; margin-bottom: 24px;
+}
+.treasure-header-area h2 {
+  font-family: 'Cinzel Decorative', serif;
+  font-size: 24px;
+  color: var(--gold-light);
+  margin-bottom: 8px;
+}
+.dig-info {
+  display: flex; justify-content: center; gap: 20px;
+  font-size: 13px;
+  color: var(--text-parchment);
+}
+.treasure-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 6px;
+  margin-bottom: 20px;
+}
+.grid-cell {
+  aspect-ratio: 1;
+  background: rgba(80,50,20,0.3);
+  border: 2px solid rgba(120,80,30,0.4);
+  border-radius: 3px;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 24px;
+  transition: all 0.2s;
+  position: relative;
+  overflow: hidden;
+}
+.grid-cell:hover { border-color: var(--gold); background: rgba(201,162,39,0.1); transform: scale(1.05); }
+.grid-cell.dug { cursor: not-allowed; }
+.grid-cell.dug:hover { transform: none; }
+.grid-cell.empty { background: rgba(40,30,15,0.5); }
+.grid-cell.bronze { background: rgba(120,60,20,0.4); border-color: #cd7f32; }
+.grid-cell.silver { background: rgba(100,100,120,0.4); border-color: #aaa; }
+.grid-cell.gold { background: rgba(120,100,20,0.4); border-color: var(--gold-light); }
+.grid-cell.royal { background: rgba(80,0,120,0.4); border-color: #aa44ff; animation: royalGlow 1s infinite; }
+@keyframes royalGlow { 0%,100% { box-shadow: 0 0 10px rgba(170,68,255,0.3); } 50% { box-shadow: 0 0 25px rgba(170,68,255,0.7); } }
+.treasure-actions { display: flex; justify-content: center; gap: 12px; }
+
+/* ===== DAILY CHALLENGE ===== */
+#screen-challenge {
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(ellipse at center, #0d1a0d 0%, #050a05 100%);
+}
+.challenge-container {
+  background: rgba(5,12,5,0.95);
+  border: 2px solid rgba(40,160,66,0.4);
+  padding: 30px;
+  max-width: 500px;
+  width: 90%;
+  text-align: center;
+}
+.challenge-modifier-badge {
+  display: inline-block;
+  background: linear-gradient(135deg, rgba(40,160,66,0.2), rgba(26,107,42,0.2));
+  border: 2px solid var(--green-bright);
+  color: var(--green-bright);
+  font-family: 'Cinzel Decorative', serif;
+  font-size: 22px;
+  padding: 10px 30px;
+  letter-spacing: 3px;
+  margin: 16px 0;
+}
+.modifier-effects {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 8px;
+  margin: 20px 0;
+  text-align: left;
+}
+.mod-effect {
+  display: flex; align-items: center; gap: 8px;
+  padding: 8px 12px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 3px;
+  font-size: 12px;
+}
+.mod-effect .eff-val { margin-left: auto; font-weight: 700; }
+.mod-effect .eff-val.buff { color: var(--green-bright); }
+.mod-effect .eff-val.nerf { color: var(--red-bright); }
+
+/* ===== SETTINGS ===== */
+#screen-settings {
+  flex-direction: column;
+  background: linear-gradient(180deg, #050810 0%, #0a1220 100%);
+}
+.settings-layout {
+  display: flex; flex: 1; overflow: hidden;
+}
+.settings-tabs {
+  width: 180px;
+  background: rgba(5,10,20,0.98);
+  border-right: 1px solid rgba(201,162,39,0.15);
+  padding: 20px 12px;
+  display: flex; flex-direction: column; gap: 4px;
+}
+.settings-tab {
+  display: flex; align-items: center; gap: 10px;
+  padding: 12px 14px;
+  background: transparent;
+  border: 1px solid transparent;
+  color: rgba(212,184,150,0.6);
+  font-family: 'Cinzel', serif;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  cursor: pointer;
+  border-radius: 3px;
+  transition: all 0.2s;
+  text-align: left;
+  width: 100%;
+}
+.settings-tab.active, .settings-tab:hover {
+  background: rgba(201,162,39,0.08);
+  border-color: rgba(201,162,39,0.3);
+  color: var(--gold-light);
+}
+.settings-content {
+  flex: 1; padding: 30px; overflow-y: auto;
+}
+.settings-section { margin-bottom: 30px; }
+.settings-section h3 {
+  font-size: 12px; letter-spacing: 3px;
+  color: rgba(201,162,39,0.6);
+  margin-bottom: 16px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgba(201,162,39,0.15);
+}
+.setting-row {
+  display: flex; align-items: center; gap: 16px;
+  padding: 12px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+}
+.setting-row:last-child { border-bottom: none; }
+.setting-label { flex: 1; font-size: 13px; }
+.setting-label span { display: block; font-family: 'IM Fell English', serif; font-size: 11px; color: rgba(212,184,150,0.5); font-style: italic; margin-top: 2px; }
+.slider-control {
+  display: flex; align-items: center; gap: 10px;
+  width: 200px;
+}
+.game-slider {
+  -webkit-appearance: none;
+  flex: 1; height: 4px;
+  background: rgba(255,255,255,0.1);
+  border-radius: 2px;
+  outline: none;
+  cursor: pointer;
+}
+.game-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 16px; height: 16px;
+  background: linear-gradient(135deg, var(--gold-light), var(--gold-dark));
+  border-radius: 50%;
+  cursor: grab;
+  box-shadow: 0 0 8px rgba(201,162,39,0.4);
+}
+.slider-val { font-size: 12px; color: var(--gold); width: 32px; text-align: right; font-weight: 700; }
+.toggle-switch {
+  width: 44px; height: 24px;
+  background: rgba(255,255,255,0.1);
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 12px;
+  position: relative;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+.toggle-switch.on { background: rgba(40,160,66,0.3); border-color: var(--green-bright); }
+.toggle-knob {
+  position: absolute;
+  top: 2px; left: 2px;
+  width: 18px; height: 18px;
+  background: rgba(200,200,200,0.5);
+  border-radius: 50%;
+  transition: all 0.3s;
+}
+.toggle-switch.on .toggle-knob { left: 22px; background: var(--green-bright); box-shadow: 0 0 8px rgba(40,160,66,0.6); }
+
+.version-badge {
+  display: inline-block;
+  background: rgba(201,162,39,0.1);
+  border: 1px solid rgba(201,162,39,0.3);
+  padding: 6px 14px;
+  font-size: 12px;
+  color: var(--gold);
+  letter-spacing: 2px;
+  margin-bottom: 16px;
+}
+.changelog-item {
+  display: flex; gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+  font-size: 12px;
+}
+.cl-tag {
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  flex-shrink: 0;
+  align-self: flex-start;
+  margin-top: 1px;
+}
+.cl-tag.new { background: rgba(40,160,66,0.2); border: 1px solid var(--green-bright); color: var(--green-bright); }
+.cl-tag.fix { background: rgba(201,162,39,0.15); border: 1px solid var(--gold); color: var(--gold); }
+.cl-tag.imp { background: rgba(30,120,200,0.2); border: 1px solid #4a9fd4; color: #4a9fd4; }
+.cl-text { color: var(--text-parchment); line-height: 1.5; }
+
+/* ===== MODALS / OVERLAYS ===== */
+.modal-overlay {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.75);
+  z-index: 100;
+  display: flex; align-items: center; justify-content: center;
+  backdrop-filter: blur(4px);
+}
+.modal-overlay.hidden { display: none; }
+.modal-box {
+  background: linear-gradient(135deg, rgba(8,14,26,0.99) 0%, rgba(13,22,36,0.99) 100%);
+  border: 1px solid rgba(201,162,39,0.5);
+  padding: 36px;
+  max-width: 500px;
+  width: 90%;
+  position: relative;
+  box-shadow: 0 0 80px rgba(0,0,0,0.5), 0 0 40px rgba(201,162,39,0.08);
+  animation: modalIn 0.3s ease;
+}
+@keyframes modalIn {
+  from { transform: scale(0.9); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+.modal-box h2 {
+  font-family: 'Cinzel Decorative', serif;
+  font-size: 22px;
+  color: var(--gold-light);
+  text-align: center;
+  margin-bottom: 20px;
+}
+.modal-close {
+  position: absolute; top: 12px; right: 16px;
+  background: none; border: none;
+  color: rgba(201,162,39,0.5);
+  font-size: 22px; cursor: pointer;
+  transition: color 0.2s;
+  font-family: serif;
+}
+.modal-close:hover { color: var(--gold-light); }
+
+/* Reward summary */
+.reward-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
+  margin: 16px 0;
+}
+.reward-item {
+  display: flex; align-items: center; gap: 12px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(201,162,39,0.2);
+  padding: 12px 16px;
+  border-radius: 3px;
+}
+.reward-item .r-icon { font-size: 28px; }
+.reward-item .r-val { font-size: 18px; font-weight: 700; color: var(--gold-light); }
+.reward-item .r-label { font-size: 10px; color: rgba(212,184,150,0.5); letter-spacing: 1px; }
+
+/* Level up modal */
+.levelup-banner {
+  text-align: center;
+}
+.levelup-number {
+  font-family: 'Cinzel Decorative', serif;
+  font-size: 72px;
+  background: linear-gradient(180deg, #fff8e0, #f0c040, #c9a227);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 0 30px rgba(201,162,39,0.6));
+  animation: levelPop 0.5s ease-out;
+}
+@keyframes levelPop {
+  0% { transform: scale(0.5); }
+  70% { transform: scale(1.1); }
+  100% { transform: scale(1); }
+}
+
+/* Daily reward modal */
+.day-rewards-row {
+  display: flex; gap: 8px; margin: 20px 0;
+}
+.day-card {
+  flex: 1;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.08);
+  padding: 10px 6px;
+  text-align: center;
+  border-radius: 3px;
+}
+.day-card.today {
+  border-color: var(--gold);
+  background: rgba(201,162,39,0.08);
+  box-shadow: 0 0 15px rgba(201,162,39,0.15);
+}
+.day-card.claimed { opacity: 0.5; }
+.day-card .day-num { font-size: 10px; color: rgba(212,184,150,0.5); margin-bottom: 4px; }
+.day-card .day-icon { font-size: 22px; }
+.day-card .day-val { font-size: 11px; color: var(--gold); font-weight: 700; margin-top: 4px; }
+
+/* Chest opening */
+.chest-visual {
+  text-align: center; font-size: 90px;
+  animation: chestShake 0.1s ease-in-out infinite;
+}
+.chest-visual.open { animation: chestPop 0.5s ease-out forwards; font-size: 90px; }
+@keyframes chestShake {
+  0%,100% { transform: rotate(-3deg); }
+  50% { transform: rotate(3deg); }
+}
+@keyframes chestPop {
+  0% { transform: scale(1); }
+  30% { transform: scale(1.4) rotate(5deg); }
+  100% { transform: scale(1); }
+}
+.rarity-bar {
+  display: flex; gap: 4px; justify-content: center; margin: 16px 0;
+}
+.rarity-dot {
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.15);
+  border: 1px solid rgba(255,255,255,0.2);
+  animation: rarityReveal 1.5s forwards;
+  animation-delay: var(--d);
+}
+.rarity-dot.common { background: #aaa; }
+.rarity-dot.uncommon { background: #28a042; }
+.rarity-dot.rare { background: #4a9fd4; }
+.rarity-dot.epic { background: #aa44ff; }
+.rarity-dot.legendary { background: var(--gold); box-shadow: 0 0 8px rgba(201,162,39,0.6); }
+
+/* ===== PROFILE ===== */
+#screen-profile {
+  flex-direction: column;
+  background: linear-gradient(180deg, #050810 0%, #0a1220 100%);
+}
+.profile-layout {
+  flex: 1; display: flex; overflow: hidden;
+}
+.profile-card {
+  width: 280px;
+  background: rgba(5,10,20,0.98);
+  border-right: 1px solid rgba(201,162,39,0.2);
+  padding: 30px 20px;
+  display: flex; flex-direction: column; align-items: center; gap: 16px;
+}
+.profile-avatar-big {
+  width: 100px; height: 100px;
+  background: linear-gradient(135deg, var(--sea-blue), var(--navy-mid));
+  border: 3px solid var(--gold);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 50px;
+  box-shadow: 0 0 30px rgba(201,162,39,0.2);
+}
+.profile-name-display {
+  font-family: 'Cinzel Decorative', serif;
+  font-size: 18px;
+  color: var(--gold-light);
+  text-align: center;
+}
+.profile-badges { display: flex; gap: 6px; flex-wrap: wrap; justify-content: center; }
+.badge {
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+.badge.rank { background: rgba(201,162,39,0.15); border: 1px solid var(--gold); color: var(--gold); }
+.badge.level { background: rgba(30,120,200,0.2); border: 1px solid #4a9fd4; color: #4a9fd4; }
+.profile-stats-mini {
+  width: 100%;
+  display: flex; flex-direction: column; gap: 8px;
+}
+.ps-row {
+  display: flex; justify-content: space-between;
+  padding: 8px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+  font-size: 12px;
+}
+.ps-row .ps-label { color: rgba(212,184,150,0.5); }
+.ps-row .ps-val { color: var(--text-parchment); font-weight: 700; }
+.profile-main { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 16px; }
+
+/* Achievements */
+.achievement-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 10px;
+}
+.achievement-card {
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.08);
+  padding: 16px 12px;
+  text-align: center;
+  border-radius: 3px;
+  transition: all 0.2s;
+}
+.achievement-card.unlocked {
+  border-color: rgba(201,162,39,0.4);
+  background: rgba(201,162,39,0.06);
+}
+.achievement-card.unlocked:hover { border-color: var(--gold); }
+.ach-icon { font-size: 32px; margin-bottom: 8px; filter: grayscale(1); }
+.achievement-card.unlocked .ach-icon { filter: none; }
+.ach-name { font-size: 11px; font-weight: 700; color: rgba(212,184,150,0.6); }
+.achievement-card.unlocked .ach-name { color: var(--gold-light); }
+.ach-desc { font-family: 'IM Fell English', serif; font-style: italic; font-size: 10px; color: rgba(212,184,150,0.4); margin-top: 4px; }
+
+/* ===== GENERIC BUTTONS ===== */
+.btn-primary {
+  padding: 12px 28px;
+  background: linear-gradient(135deg, #c9a227 0%, #8a6a10 100%);
+  border: none;
+  color: #0a0e1a;
+  font-family: 'Cinzel', serif;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  cursor: pointer;
+  transition: all 0.3s;
+  border-radius: 2px;
+}
+.btn-primary:hover { background: linear-gradient(135deg, #f0c040, #c9a227); box-shadow: 0 0 25px rgba(201,162,39,0.3); }
+
+.btn-secondary {
+  padding: 12px 28px;
+  background: transparent;
+  border: 1px solid rgba(201,162,39,0.4);
+  color: var(--text-parchment);
+  font-family: 'Cinzel', serif;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 2px;
+  cursor: pointer;
+  transition: all 0.3s;
+  border-radius: 2px;
+}
+.btn-secondary:hover { border-color: var(--gold); color: var(--gold-light); }
+
+.btn-danger {
+  padding: 12px 28px;
+  background: linear-gradient(135deg, #8b1a1a 0%, #5a0a0a 100%);
+  border: 1px solid var(--red-bright);
+  color: white;
+  font-family: 'Cinzel', serif;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  cursor: pointer;
+  transition: all 0.3s;
+  border-radius: 2px;
+}
+.btn-danger:hover { background: linear-gradient(135deg, #cc2222, #8b1a1a); }
+
+/* Screen title bar */
+.screen-titlebar {
+  height: 52px;
+  background: linear-gradient(90deg, rgba(8,14,26,0.98), rgba(13,27,42,0.95));
+  border-bottom: 1px solid rgba(201,162,39,0.25);
+  display: flex; align-items: center;
+  padding: 0 20px; gap: 16px;
+  flex-shrink: 0;
+}
+.screen-titlebar .back-btn {
+  padding: 8px 14px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.1);
+  color: var(--text-parchment);
+  font-family: 'Cinzel', serif;
+  font-size: 11px;
+  letter-spacing: 2px;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex; align-items: center; gap: 6px;
+}
+.screen-titlebar .back-btn:hover { border-color: rgba(201,162,39,0.4); color: var(--gold-light); }
+.screen-titlebar h2 {
+  font-family: 'Cinzel Decorative', serif;
+  font-size: 16px;
+  color: var(--gold-light);
+  letter-spacing: 3px;
+}
+
+/* ===== UTILITY ===== */
+.hidden { display: none !important; }
+.flex-center { display: flex; align-items: center; justify-content: center; }
+.gap-8 { gap: 8px; }
+.mt-12 { margin-top: 12px; }
+.text-center { text-align: center; }
+.text-gold { color: var(--gold-light); }
+.text-small { font-size: 12px; font-family: 'IM Fell English', serif; font-style: italic; color: rgba(212,184,150,0.6); }
+
+/* Toast notifications */
+#toast-container {
+  position: fixed; top: 80px; right: 20px;
+  z-index: 200;
+  display: flex; flex-direction: column; gap: 8px;
+  pointer-events: none;
+}
+.toast {
+  background: rgba(8,14,26,0.96);
+  border: 1px solid rgba(201,162,39,0.5);
+  padding: 12px 18px;
+  font-size: 13px;
+  color: var(--text-parchment);
+  min-width: 240px;
+  display: flex; align-items: center; gap: 10px;
+  animation: toastIn 0.3s ease, toastOut 0.3s ease 2.7s forwards;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+}
+.toast.success { border-color: rgba(40,160,66,0.6); }
+.toast.warning { border-color: rgba(201,162,39,0.8); }
+.toast.danger { border-color: rgba(204,34,34,0.6); }
+@keyframes toastIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+@keyframes toastOut { from { opacity: 1; } to { opacity: 0; transform: translateX(20px); } }
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(201,162,39,0.3); border-radius: 2px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(201,162,39,0.5); }
+
+/* ===== BATTLE PREP SCREEN ===== */
+.prep-layout {
+  display: flex; gap: 16px; padding: 20px;
+}
+.prep-crew-slot {
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.08);
+  padding: 16px;
+  border-radius: 3px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  min-width: 100px;
+}
+.prep-crew-slot:hover { border-color: rgba(201,162,39,0.4); }
+.prep-crew-slot .slot-icon { font-size: 36px; margin-bottom: 8px; }
+.prep-crew-slot .slot-label { font-size: 11px; color: rgba(212,184,150,0.5); letter-spacing: 1px; }
+.prep-crew-slot .slot-name { font-size: 12px; color: var(--gold-light); font-weight: 700; margin-top: 4px; }
+
+/* Floating islands/decorations */
+.battle-clouds {
+  position: absolute;
+  top: 10%; right: 10%;
+  font-size: 80px;
+  opacity: 0.3;
+  animation: cloudDrift 20s linear infinite;
+}
+@keyframes cloudDrift {
+  0% { transform: translateX(0); }
+  50% { transform: translateX(-30px); }
+  100% { transform: translateX(0); }
+}
+
+/* Compass */
+.compass {
+  position: absolute; bottom: 100px; right: 20px;
+  width: 80px; height: 80px;
+  background: radial-gradient(circle at 50% 40%, rgba(30,64,96,0.9), rgba(8,14,26,0.95));
+  border: 2px solid rgba(201,162,39,0.5);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  pointer-events: all;
+}
+.compass-needle {
+  width: 4px; height: 30px;
+  background: linear-gradient(180deg, var(--red-bright) 50%, #ccc 50%);
+  border-radius: 2px;
+  transform-origin: center bottom;
+  animation: compassSpin 4s ease-in-out infinite;
+}
+@keyframes compassSpin {
+  0%,100% { transform: rotate(-10deg); }
+  50% { transform: rotate(10deg); }
+}
+
+/* Sea monsters */
+.sea-monster {
+  position: absolute;
+  font-size: 50px;
+  opacity: 0;
+  animation: monsterRise 8s ease-in-out infinite;
+}
+.sea-monster:nth-child(1) { bottom: 20%; left: 60%; animation-delay: 3s; }
+.sea-monster:nth-child(2) { bottom: 15%; left: 80%; animation-delay: 7s; }
+@keyframes monsterRise {
+  0%,80%,100% { opacity: 0; transform: translateY(40px); }
+  10%,70% { opacity: 1; transform: translateY(0); }
+}
+
+/* Battle score/streak */
+.battle-streak {
+  position: absolute; top: 12px; left: 50%; transform: translateX(-50%);
+  background: rgba(8,14,26,0.85);
+  border: 1px solid rgba(201,162,39,0.4);
+  padding: 6px 20px;
+  text-align: center;
+  pointer-events: none;
+}
+.streak-label { font-size: 9px; color: rgba(201,162,39,0.6); letter-spacing: 3px; }
+.streak-val { font-size: 20px; font-weight: 900; color: var(--gold-light); font-family: 'Cinzel Decorative', serif; }
+
+/* ===== DUNGEON SCREEN ===== */
+#screen-dungeon {
+  flex-direction: column;
+  background: linear-gradient(180deg, #050810 0%, #0a0d18 100%);
+}
+.dungeon-list {
+  display: flex; flex-direction: column; gap: 12px;
+  padding: 20px; overflow-y: auto; flex: 1;
+}
+.dungeon-card {
+  display: flex; align-items: center; gap: 16px;
+  background: rgba(8,14,26,0.92);
+  border: 1px solid rgba(255,255,255,0.08);
+  padding: 18px 20px;
+  border-radius: 4px;
+  transition: all 0.3s;
+  position: relative; overflow: hidden;
+}
+.dungeon-card::before {
+  content: '';
+  position: absolute; left: 0; top: 0; bottom: 0; width: 3px;
+  background: var(--red-bright);
+  opacity: 0.6;
+}
+.dungeon-card:hover { border-color: rgba(204,34,34,0.4); transform: translateX(4px); }
+.dungeon-card.cleared { border-color: rgba(201,162,39,0.3); }
+.dungeon-card.cleared::before { background: var(--gold); }
+.dungeon-card.locked { opacity: 0.5; }
+.dungeon-icon { font-size: 42px; flex-shrink: 0; }
+.dungeon-info { flex: 1; }
+.dungeon-name { font-family: 'Cinzel', serif; font-size: 16px; font-weight: 700; color: var(--text-parchment); margin-bottom: 4px; }
+.dungeon-desc { font-family: 'IM Fell English', serif; font-style: italic; font-size: 12px; color: rgba(212,184,150,0.5); margin-bottom: 8px; }
+.dungeon-difficulty { font-size: 14px; margin-bottom: 4px; }
+.dungeon-stars { font-size: 16px; letter-spacing: 2px; }
+.dungeon-rewards {
+  text-align: right; display: flex; flex-direction: column; gap: 6px;
+  font-size: 13px; color: var(--gold); flex-shrink: 0;
+}
+.dungeon-enter-btn {
+  padding: 10px 20px;
+  background: linear-gradient(135deg, rgba(139,26,26,0.3), rgba(80,10,10,0.3));
+  border: 1px solid rgba(204,34,34,0.5);
+  color: var(--red-bright);
+  font-family: 'Cinzel', serif; font-size: 12px; font-weight: 700; letter-spacing: 2px;
+  cursor: pointer; transition: all 0.2s; border-radius: 2px;
+}
+.dungeon-enter-btn:hover { background: linear-gradient(135deg, rgba(204,34,34,0.4), rgba(139,26,26,0.3)); box-shadow: 0 0 15px rgba(204,34,34,0.2); }
+.dungeon-enter-btn.locked { opacity: 0.4; cursor: not-allowed; color: #888; border-color: rgba(255,255,255,0.1); }
+
+/* ===== BATTLE PASS SCREEN ===== */
+#screen-battlepass {
+  flex-direction: column;
+  background: linear-gradient(180deg, #080a18 0%, #050810 100%);
+}
+.bp-header {
+  background: linear-gradient(90deg, rgba(80,40,140,0.3), rgba(40,20,80,0.3));
+  border-bottom: 1px solid rgba(150,100,220,0.3);
+  padding: 16px 24px;
+  display: flex; align-items: center; gap: 20px; flex-shrink: 0;
+}
+.bp-season-title {
+  font-family: 'Cinzel Decorative', serif;
+  font-size: 20px;
+  background: linear-gradient(135deg, #cc88ff, #8844cc);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  letter-spacing: 3px;
+}
+.bp-exp-bar-wrap { flex: 1; }
+.bp-exp-bar-track {
+  height: 10px; background: rgba(255,255,255,0.08);
+  border-radius: 5px; overflow: hidden; margin-top: 6px;
+}
+.bp-exp-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #6622cc, #cc88ff);
+  border-radius: 5px; transition: width 0.8s ease;
+}
+.bp-premium-btn {
+  padding: 10px 20px;
+  background: linear-gradient(135deg, rgba(150,100,220,0.3), rgba(80,40,140,0.3));
+  border: 1px solid rgba(150,100,220,0.6);
+  color: #cc88ff; font-family: 'Cinzel', serif;
+  font-size: 12px; font-weight: 700; letter-spacing: 2px;
+  cursor: pointer; border-radius: 2px; transition: all 0.2s;
+}
+.bp-premium-btn:hover { background: rgba(150,100,220,0.4); box-shadow: 0 0 20px rgba(150,100,220,0.3); }
+.bp-tiers {
+  flex: 1; overflow-y: auto; padding: 16px 20px;
+  display: flex; flex-direction: column; gap: 8px;
+}
+.bp-tier {
+  display: flex; align-items: center; gap: 12px;
+  padding: 10px 14px;
+  background: rgba(8,14,26,0.8);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 3px; transition: all 0.2s;
+}
+.bp-tier.current { border-color: rgba(150,100,220,0.5); background: rgba(80,40,140,0.15); }
+.bp-tier.unlocked { border-color: rgba(201,162,39,0.25); }
+.bp-tier-num { font-size: 11px; color: rgba(212,184,150,0.4); width: 50px; flex-shrink: 0; }
+.bp-tier.current .bp-tier-num { color: #cc88ff; font-weight: 700; }
+.bp-track {
+  flex: 1; display: flex; align-items: center; gap: 10px;
+  background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.07);
+  padding: 8px 12px; border-radius: 3px; position: relative;
+}
+.bp-track.premium.locked { opacity: 0.4; }
+.bp-icon { font-size: 20px; }
+.bp-claimed {
+  position: absolute; top: 4px; right: 8px;
+  font-size: 11px; color: var(--green-bright); font-weight: 700;
+}
+
+/* ===== CREW SCREEN ===== */
+#screen-crew {
+  flex-direction: column;
+  background: linear-gradient(180deg, #050e1a 0%, #08121e 100%);
+}
+.crew-card {
+  display: flex; align-items: center; gap: 14px;
+  background: rgba(8,14,26,0.9);
+  border: 1px solid rgba(255,255,255,0.07);
+  padding: 14px 16px; border-radius: 3px;
+  transition: all 0.2s; margin-bottom: 8px;
+}
+.crew-card.active { border-color: rgba(40,160,66,0.5); background: rgba(40,160,66,0.05); }
+.crew-avatar { font-size: 36px; flex-shrink: 0; }
+.crew-info { flex: 1; }
+.crew-name { font-size: 14px; font-weight: 700; color: var(--text-parchment); margin-bottom: 3px; }
+.crew-toggle-btn {
+  padding: 8px 16px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.12);
+  color: rgba(212,184,150,0.6);
+  font-family: 'Cinzel', serif; font-size: 11px; font-weight: 700; letter-spacing: 1px;
+  cursor: pointer; border-radius: 2px; transition: all 0.2s; white-space: nowrap;
+}
+.crew-toggle-btn.active {
+  background: rgba(40,160,66,0.2); border-color: var(--green-bright); color: var(--green-bright);
+}
+.crew-toggle-btn:hover { border-color: rgba(201,162,39,0.4); color: var(--gold-light); }
+
+/* ===== DAILY LOGIN MODAL ===== */
+.login-day-grid {
+  display: flex; gap: 6px; margin: 16px 0; justify-content: center;
+}
+.login-day {
+  flex: 1; max-width: 60px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.08);
+  padding: 8px 4px; border-radius: 3px;
+  text-align: center; transition: all 0.2s;
+}
+.login-day.current {
+  border-color: var(--gold); background: rgba(201,162,39,0.1);
+  box-shadow: 0 0 15px rgba(201,162,39,0.2);
+}
+.login-day.claimed { opacity: 0.45; }
+
+/* ===== QUEST DAILY badge ===== */
+.daily-quest { border-left: 2px solid rgba(40,160,66,0.5) !important; }
+
+/* ===== SVG ship containers ===== */
+.player-ship-battle, .enemy-ship-battle {
+  overflow: visible;
+}
+.player-ship-battle svg { animation: shipBobBattle 3s ease-in-out infinite; }
+.enemy-ship-battle svg { animation: enemyBob 3.5s ease-in-out infinite; }
+@keyframes floatUp {
+  0% { transform: translateY(0); opacity: 1; }
+  100% { transform: translateY(-70px); opacity: 0; }
+}
+@keyframes screenShake {
+  0%,100% { transform: translateX(0); }
+  20% { transform: translateX(-6px); }
+  40% { transform: translateX(6px); }
+  60% { transform: translateX(-4px); }
+  80% { transform: translateX(4px); }
+}
+@keyframes explodeAnim {
+  0% { transform: scale(0); opacity: 1; }
+  60% { transform: scale(1.5); opacity: 0.9; }
+  100% { transform: scale(2.5); opacity: 0; }
+}
+@keyframes powerupPulse {
+  0%,100% { transform: scale(1) rotate(0deg); filter: drop-shadow(0 0 8px rgba(201,162,39,0.6)); }
+  50% { transform: scale(1.15) rotate(5deg); filter: drop-shadow(0 0 20px rgba(201,162,39,0.9)); }
+}
+@keyframes cooldownFill {
+  from { stroke-dashoffset: 251; }
+  to { stroke-dashoffset: 0; }
+}
+.dungeon-wave-badge {
+  position: absolute; top: 120px; left: 50%; transform: translateX(-50%);
+  background: rgba(80,0,20,0.85);
+  border: 1px solid rgba(204,34,34,0.5);
+  padding: 4px 16px;
+  font-size: 11px; letter-spacing: 2px; color: var(--red-bright);
+  display: none; pointer-events: none;
+}
+</style>
+</head>
+<body>
+
+<!-- TOAST CONTAINER -->
+<div id="toast-container"></div>
+
+<!-- ===== SPLASH SCREEN ===== -->
+<div id="screen-splash" class="screen active" onclick="showScreen('menu')">
+  <div class="splash-bg"></div>
+  <div class="stars" id="starfield"></div>
+  <div class="splash-ship">⛵</div>
+  <div class="splash-waves"></div>
+  
+  <div class="splash-title" style="position:relative;z-index:10;">
+    <h1>SEA CONQUEROR</h1>
+    <div class="subtitle">DENİZLERİN EFENDİSİ</div>
+  </div>
+  <div class="splash-click">Başlamak için tıklayın</div>
+  <div class="splash-version">v2.0.0 — KRAKEN'S WRATH UPDATE</div>
+</div>
+
+<!-- ===== MAIN MENU ===== -->
+<div id="screen-menu" class="screen">
+  <div class="menu-bg"></div>
+  <div class="menu-ship-bg">🚢</div>
+  
+  <div class="menu-left">
+    <div class="menu-logo">
+      <h1>SEA<br>CONQUEROR</h1>
+      <div class="sub">⚓ DENİZLERİN EFENDİSİ ⚓</div>
+    </div>
+    
+    <nav class="menu-nav">
+      <button class="menu-btn primary" onclick="startGame()">
+        <span class="btn-icon">⚓</span> MACERAYA BAŞLA
+      </button>
+      <div class="menu-divider"></div>
+      <button class="menu-btn" onclick="showScreen('hub')">
+        <span class="btn-icon">🗺️</span> DÜNYA HARİTASI
+      </button>
+      <button class="menu-btn" onclick="showScreen('upgrade')">
+        <span class="btn-icon">⚙️</span> GEMİ TEZGAHI
+      </button>
+      <button class="menu-btn" onclick="showScreen('dungeon')">
+        <span class="btn-icon">🏴‍☠️</span> ZİNDANLAR <span class="daily-badge">YENİ</span>
+      </button>
+      <button class="menu-btn" onclick="showScreen('arena')">
+        <span class="btn-icon">⚔️</span> ARENA <span class="daily-badge">HOT</span>
+      </button>
+      <button class="menu-btn" onclick="showScreen('treasure')">
+        <span class="btn-icon">🗝️</span> HAZİNE AVI
+      </button>
+      <button class="menu-btn" onclick="showScreen('challenge')">
+        <span class="btn-icon">⚡</span> GÜNLÜK MEYDAN OKUMA
+      </button>
+      <div class="menu-divider"></div>
+      <button class="menu-btn" onclick="showScreen('battlepass')">
+        <span class="btn-icon">🎖️</span> SEZON GEÇİŞİ
+      </button>
+      <button class="menu-btn" onclick="showScreen('profile')">
+        <span class="btn-icon">👤</span> PROFİL & BAŞARIMLAR
+      </button>
+      <button class="menu-btn" onclick="showScreen('settings')">
+        <span class="btn-icon">⚙️</span> AYARLAR
+      </button>
+    </nav>
+  </div>
+  
+  <!-- Decorative right side -->
+  <div style="flex:1;position:relative;overflow:hidden;">
+    <div style="position:absolute;inset:0;background:radial-gradient(ellipse at 60% 50%,rgba(26,64,96,0.2) 0%,transparent 70%)"></div>
+    <!-- Animated ship silhouette -->
+    <div style="position:absolute;bottom:20%;left:20%;font-size:150px;opacity:0.07;animation:shipBobSmall 4s ease-in-out infinite">🚢</div>
+    <div style="position:absolute;top:30%;right:15%;font-size:60px;opacity:0.05;animation:shipBobSmall 5s ease-in-out infinite reverse">⛵</div>
+    
+    <!-- Menu info panel -->
+    <div style="position:absolute;bottom:30px;left:20px;right:20px;">
+      <div class="panel">
+        <div class="panel-header">
+          <span>📢</span>
+          <h3>DUYURULAR</h3>
+        </div>
+        <div class="panel-body" style="display:flex;flex-direction:column;gap:8px;">
+          <div style="font-family:'IM Fell English',serif;font-style:italic;font-size:13px;color:rgba(212,184,150,0.8);padding:6px 0;border-bottom:1px solid rgba(255,255,255,0.06)">
+            🌊 <strong style="color:var(--gold)">v2.0 Kraken's Wrath Update:</strong> Zindan sistemi, SVG gemiler, ses motoru ve Battle Pass eklendi!
+          </div>
+          <div style="font-family:'IM Fell English',serif;font-style:italic;font-size:13px;color:rgba(212,184,150,0.8);padding:6px 0">
+            ⚓ Bu hafta Zindan'da <strong style="color:var(--gold)">2x EXP</strong> etkinliği devam ediyor!
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== NAME SELECTION ===== -->
+<div id="screen-name" class="screen">
+  <div class="name-card">
+    <h2>KAPTANİSMİNİ SEÇ</h2>
+    <p>Bu isim yalnızca sana ait olacak. Başkası alamayacak.</p>
+    <input type="text" class="name-input" id="nameInput" placeholder="KAPTAN ADI..." maxlength="20" oninput="checkName()" />
+    <div class="name-status" id="nameStatus"></div>
+    <button class="confirm-btn" onclick="confirmName()">⚓ DENİZLERE AÇ</button>
+  </div>
+</div>
+
+<!-- ===== GAME HUB ===== -->
+<div id="screen-hub" class="screen">
+  <div class="hub-header">
+    <div class="hub-player-info">
+      <div class="hub-avatar">⚓</div>
+      <div>
+        <div class="hub-name" id="hubPlayerName">KAPTAN</div>
+        <div class="hub-level">
+          <span>Seviye <span id="hubLevel">12</span></span>
+          <div class="exp-bar-mini"><div class="exp-fill-mini" id="expBarMini" style="width:65%"></div></div>
+          <span id="expText">6500/10000 EXP</span>
+        </div>
+      </div>
+    </div>
+    
+    <div class="hub-resources">
+      <div class="resource-chip"><span class="icon">🪙</span><span id="goldDisplay">250,000</span></div>
+      <div class="resource-chip"><span class="icon">🪵</span><span id="woodDisplay">150,000</span></div>
+      <div class="resource-chip"><span class="icon">💎</span><span id="gemDisplay">580</span></div>
+    </div>
+    
+    <div class="hub-header-btns">
+      <button class="hdr-btn" onclick="checkDailyLogin()" title="Günlük Ödül">🎁<span class="notif-dot"></span></button>
+      <button class="hdr-btn" onclick="showChestOpening()" title="Sandık Aç">📦</button>
+      <button class="hdr-btn" onclick="showScreen('settings')" title="Ayarlar">⚙️</button>
+      <button class="hdr-btn" onclick="showScreen('menu')" title="Ana Menü">🏠</button>
+    </div>
+  </div>
+  
+  <div class="hub-content">
+    <div class="hub-sidebar">
+      <div class="hub-sidebar-title">NAVİGASYON</div>
+      <button class="sidebar-nav-btn active" onclick="showHubSection('overview')">
+        <span class="s-icon">🗺️</span> GENEL BAKIŞ
+      </button>
+      <button class="sidebar-nav-btn" onclick="showHubSection('quests')">
+        <span class="s-icon">📜</span> GÖREVLER
+      </button>
+      <button class="sidebar-nav-btn" onclick="showHubSection('ship')">
+        <span class="s-icon">⛵</span> GEMİM
+      </button>
+      <button class="sidebar-nav-btn" onclick="showHubSection('crew')">
+        <span class="s-icon">👥</span> MÜRETTEBAT
+      </button>
+      
+      <div class="hub-sidebar-title">MODLAR</div>
+      <button class="sidebar-nav-btn" onclick="showScreen('dungeon')">
+        <span class="s-icon">🏴‍☠️</span> ZİNDANLAR
+      </button>
+      <button class="sidebar-nav-btn" onclick="showScreen('arena')">
+        <span class="s-icon">⚔️</span> ARENA
+      </button>
+      <button class="sidebar-nav-btn" onclick="showScreen('treasure')">
+        <span class="s-icon">🗝️</span> HAZİNE AVI
+      </button>
+      <button class="sidebar-nav-btn" onclick="showScreen('challenge')">
+        <span class="s-icon">⚡</span> MEYDAN OKUMA
+      </button>
+      
+      <div class="hub-sidebar-title">GELİŞTİRME</div>
+      <button class="sidebar-nav-btn" onclick="showScreen('upgrade')">
+        <span class="s-icon">⚙️</span> TEZGAH
+      </button>
+      <button class="sidebar-nav-btn" onclick="showScreen('crew')">
+        <span class="s-icon">👥</span> TAYFA & EVC.
+      </button>
+      <button class="sidebar-nav-btn" onclick="showScreen('battlepass')">
+        <span class="s-icon">🎖️</span> SEZON GEÇİŞİ
+      </button>
+      <button class="sidebar-nav-btn" onclick="showScreen('profile')">
+        <span class="s-icon">🏆</span> BAŞARIMLAR
+      </button>
+    </div>
+    
+    <div class="hub-main" id="hubMain">
+      <!-- Overview section -->
+      <div id="hub-overview">
+        <!-- Quick actions -->
+        <div class="panel">
+          <div class="panel-header">
+            <span>⚓</span><h3>HIZLI ERİŞİM</h3>
+          </div>
+          <div class="panel-body">
+            <div class="welcome-grid">
+              <div class="action-card" onclick="startBattle('normal')">
+                <span class="ac-icon">⚔️</span>
+                <div class="ac-title">SAVAŞA GİT</div>
+                <div class="ac-sub">Düşman gemileriyle çarpış</div>
+              </div>
+              <div class="action-card" onclick="startBattle('boss')">
+                <span class="ac-icon">💀</span>
+                <div class="ac-title">PATRON SAVAŞI</div>
+                <div class="ac-sub">Dev düşmanı yok et</div>
+              </div>
+              <div class="action-card" onclick="showScreen('dungeon')">
+                <span class="ac-icon">🏴‍☠️</span>
+                <div class="ac-title">ZİNDANA GİR</div>
+                <div class="ac-sub">Özel görev zindanları</div>
+              </div>
+              <div class="action-card" onclick="showScreen('arena')">
+                <span class="ac-icon">🏟️</span>
+                <div class="ac-title">ARENA</div>
+                <div class="ac-sub">Dalga dalga savaş</div>
+              </div>
+              <div class="action-card" onclick="showScreen('upgrade')">
+                <span class="ac-icon">⚙️</span>
+                <div class="ac-title">GEMİ GELİŞTİR</div>
+                <div class="ac-sub">Top, gövde, yelken</div>
+              </div>
+              <div class="action-card" onclick="showScreen('treasure')">
+                <span class="ac-icon">🗺️</span>
+                <div class="ac-title">HAZİNE AVI</div>
+                <div class="ac-sub">Günlük 5x5 ızgara</div>
+              </div>
+              <div class="action-card" onclick="showScreen('challenge')">
+                <span class="ac-icon">⚡</span>
+                <div class="ac-title">MEYDAN OKUMA</div>
+                <div class="ac-sub">Bugünün özel modu</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Battle pass teaser -->
+        <div class="panel" style="cursor:pointer;" onclick="showScreen('battlepass')">
+          <div class="panel-header">
+            <span>🎖️</span><h3>SEZON GEÇİŞİ — KRAKEN SEZONU</h3>
+            <div style="margin-left:auto;font-size:11px;color:rgba(201,162,39,0.6);">Görüntüle →</div>
+          </div>
+          <div class="panel-body">
+            <div style="display:flex;align-items:center;gap:12px;margin-bottom:8px;">
+              <div style="font-size:13px;color:var(--text-parchment)">Tier <span style="color:var(--gold-light);font-family:'Cinzel Decorative',serif;font-size:20px">4</span> / 10</div>
+              <div style="flex:1;height:8px;background:rgba(255,255,255,0.08);border-radius:4px;overflow:hidden;">
+                <div style="width:40%;height:100%;background:linear-gradient(90deg,#6622cc,#cc88ff);border-radius:4px;"></div>
+              </div>
+              <div style="font-size:12px;color:#cc88ff">2,400 / 4,000 EXP</div>
+            </div>
+            <div style="font-family:'IM Fell English',serif;font-style:italic;font-size:12px;color:rgba(212,184,150,0.5)">Sonraki ödül: 💎 10 Taş — Tier 4'ü tamamla!</div>
+          </div>
+        </div>
+      
+      <!-- Quests section -->
+      <div id="hub-quests" class="hidden">
+        <div class="panel">
+          <div class="panel-header">
+            <span>📜</span><h3>AKTİF GÖREVLER</h3>
+          </div>
+          <div class="panel-body">
+            <button class="collect-all-btn" onclick="collectAllQuests()">
+              ✨ TÜMÜNÜ TOPLA
+            </button>
+            <div class="quest-list" id="questList"></div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Ship section -->
+      <div id="hub-ship" class="hidden">
+        <div class="panel">
+          <div class="panel-header"><span>⛵</span><h3>GEMİM — <span id="shipNameDisplay">SEA BREEZE</span></h3></div>
+          <div class="panel-body">
+            <div class="ship-display">
+              <div class="ship-visual-area">
+                <div class="ship-sea"></div>
+                <div class="ship-emoji" id="hubShipSVG" style="position:relative;z-index:2;"></div>
+              </div>
+              <div class="ship-upgrades">
+                <div style="font-size:11px;color:rgba(201,162,39,0.6);letter-spacing:2px;margin-bottom:8px;">GEMİ İSTATİSTİKLERİ</div>
+                <div class="upgrade-row"><span class="upgrade-label">💥 TOP GÜCÜ</span><div class="upgrade-bar"><div class="upgrade-fill cannon" id="statCannon" style="width:40%"></div></div><span class="upgrade-val" id="statCannonVal">40</span></div>
+                <div class="upgrade-row"><span class="upgrade-label">🛡️ GÖVDE</span><div class="upgrade-bar"><div class="upgrade-fill hull" id="statHull" style="width:55%"></div></div><span class="upgrade-val" id="statHullVal">55</span></div>
+                <div class="upgrade-row"><span class="upgrade-label">🌊 YELKEN</span><div class="upgrade-bar"><div class="upgrade-fill sail" id="statSail" style="width:30%"></div></div><span class="upgrade-val" id="statSailVal">30</span></div>
+                <div class="upgrade-row"><span class="upgrade-label">👥 TAYFA</span><div class="upgrade-bar"><div class="upgrade-fill crew" id="statCrew" style="width:25%"></div></div><span class="upgrade-val" id="statCrewVal">25</span></div>
+                <div class="mt-12" style="display:flex;gap:8px;">
+                  <button class="btn-primary" onclick="showScreen('upgrade')" style="font-size:11px;padding:10px 16px;">⬆️ GELİŞTİR</button>
+                  <button class="btn-secondary" style="font-size:11px;padding:10px 16px;">🔄 GEMİ DEĞİŞTİR</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Crew section -->
+      <div id="hub-crew" class="hidden">
+        <div class="panel">
+          <div class="panel-header"><span>👥</span><h3>MÜRETTEBAT & EVCİL HAYVANLAR</h3>
+            <button class="btn-primary" style="margin-left:auto;font-size:11px;padding:6px 14px;" onclick="showScreen('crew')">Tümünü Yönet →</button>
+          </div>
+          <div class="panel-body">
+            <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px;">
+              <div style="background:rgba(170,68,255,0.06);border:1px solid rgba(170,68,255,0.4);padding:14px;text-align:center;border-radius:3px;">
+                <div style="font-size:30px;margin-bottom:8px">🎯</div>
+                <div style="font-size:10px;color:rgba(212,184,150,0.4);letter-spacing:1px;margin-bottom:4px">TOPÇU BAŞI</div>
+                <div style="font-size:12px;font-weight:700;color:var(--text-parchment)">Kör Nişancı Jack</div>
+                <div style="font-size:11px;color:var(--green-bright);margin-top:4px">+15% Reload Hızı</div>
+              </div>
+              <div style="background:rgba(74,159,212,0.06);border:1px solid rgba(74,159,212,0.3);padding:14px;text-align:center;border-radius:3px;">
+                <div style="font-size:30px;margin-bottom:8px">🧭</div>
+                <div style="font-size:10px;color:rgba(212,184,150,0.4);letter-spacing:1px;margin-bottom:4px">DÜMENCİ</div>
+                <div style="font-size:12px;font-weight:700;color:var(--text-parchment)">Hızlı Rüzgar Maria</div>
+                <div style="font-size:11px;color:rgba(212,184,150,0.3);margin-top:4px">+20% Dönüş</div>
+              </div>
+              <div style="background:rgba(170,68,255,0.06);border:1px solid rgba(170,68,255,0.4);padding:14px;text-align:center;border-radius:3px;">
+                <div style="font-size:30px;margin-bottom:8px">🦜</div>
+                <div style="font-size:10px;color:rgba(212,184,150,0.4);letter-spacing:1px;margin-bottom:4px">EVCİL</div>
+                <div style="font-size:12px;font-weight:700;color:var(--text-parchment)">Papağan Rico</div>
+                <div style="font-size:11px;color:var(--green-bright);margin-top:4px">+10% Altın</div>
+              </div>
+              <div style="background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.06);padding:14px;text-align:center;border-radius:3px;cursor:pointer;" onclick="showScreen('crew')">
+                <div style="font-size:30px;margin-bottom:8px;opacity:0.3">➕</div>
+                <div style="font-size:10px;color:rgba(212,184,150,0.3);letter-spacing:1px">BOŞ SLOT</div>
+                <div style="font-size:11px;color:rgba(201,162,39,0.5);margin-top:4px">Ekle →</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div><!-- extra close for screen-hub -->
+<!-- /screen-hub -->
+
+<!-- ===== BATTLE SCREEN ===== -->
+<div id="screen-battle" class="screen">
+  <div class="battle-scene" id="battleScene">
+    <!-- Sky gradient -->
+    <div style="position:absolute;inset:0;background:linear-gradient(180deg,#1a3a6a 0%,#0d2a4a 50%,#0a1e35 100%)" id="skyBg"></div>
+    
+    <!-- Clouds -->
+    <div class="battle-clouds">☁️</div>
+    <div style="position:absolute;top:15%;left:10%;font-size:60px;opacity:0.2;animation:cloudDrift 25s linear infinite reverse">☁️</div>
+    
+    <!-- Sea -->
+    <div class="sea-layer">
+      <div class="wave-row"></div>
+      <div class="wave-row"></div>
+      <div class="wave-row"></div>
+    </div>
+    
+    <!-- Rain container -->
+    <div class="rain-container" id="rainContainer"></div>
+    
+    <!-- Weather overlay -->
+    <div class="weather-overlay" id="weatherOverlay"></div>
+    <div class="lightning" id="lightning"></div>
+    
+    <!-- Sea monsters -->
+    <div class="sea-monster">🦑</div>
+    <div class="sea-monster">🐙</div>
+    
+    <!-- Ships -->
+    <div class="player-ship-battle" id="playerShip"></div>
+    <div class="enemy-ship-battle" id="enemyShip"></div>
+    
+    <!-- Dungeon wave badge -->
+    <div class="dungeon-wave-badge" id="dungeonWaveInfo">Zindan Dalga 1/3</div>
+    
+    <!-- HUD -->
+    <div class="battle-hud">
+      <div class="hud-top">
+        <!-- Player health -->
+        <div class="health-panel">
+          <div class="hp-label">⛵ GEMİNİZ<span id="playerShipName" style="color:var(--gold)">SEA BREEZE</span></div>
+          <div class="hp-bar"><div class="hp-fill player" id="playerHpBar" style="width:100%"></div></div>
+          <div class="hp-text" id="playerHpText">100/100</div>
+        </div>
+        
+        <!-- Battle streak -->
+        <div class="battle-streak">
+          <div class="streak-label">SKOR</div>
+          <div class="streak-val" id="battleScore">0</div>
+        </div>
+        
+        <!-- Enemy health -->
+        <div>
+          <div class="boss-bar" id="bossBarContainer">
+            <div class="boss-name" id="bossNameDisplay">DÜŞMAN GEMİSİ</div>
+            <div class="boss-hp-bar"><div class="boss-hp-fill" id="enemyHpBar" style="width:100%"></div></div>
+            <div class="hp-text" id="enemyHpText">100/100</div>
+          </div>
+          <!-- Minimap -->
+          <div class="minimap" style="margin-top:8px;margin-left:auto;">
+            <div class="minimap-inner">
+              <div class="mm-player" style="bottom:30%;left:25%">⚓</div>
+              <div class="mm-enemy" id="mmEnemy" style="top:20%;right:20%">☠</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Quest tracker -->
+      <div class="quest-tracker" id="questTracker">
+        <div class="qt-title">🎯 GÖREV TAKİBİ</div>
+        <div class="qt-text" id="questTrackerText">3 Düşman Gemi Batar — 0/3</div>
+      </div>
+      
+      <!-- Bottom HUD -->
+      <div class="hud-bottom">
+        <!-- Smoke -->
+        <div style="margin-right:8px;">
+          <div style="background:rgba(8,14,26,0.85);border:1px solid rgba(201,162,39,0.3);padding:8px;text-align:center;">
+            <div style="font-size:24px">💨</div>
+            <div style="font-size:9px;color:rgba(201,162,39,0.6);letter-spacing:1px;margin-top:4px">DUMAN</div>
+          </div>
+        </div>
+        
+        <!-- Ammo selection -->
+        <div class="ammo-panel">
+          <div class="ammo-label">🎯 MÜHİMMAT SEÇİMİ</div>
+          <div class="ammo-slots" id="ammoSlots">
+            <div class="ammo-slot selected" onclick="selectAmmo(0)" data-ammo="0">💣<div class="aname">Gülle</div></div>
+            <div class="ammo-slot" onclick="selectAmmo(1)" data-ammo="1">🔗<div class="aname">Zincir</div></div>
+            <div class="ammo-slot" onclick="selectAmmo(2)" data-ammo="2">🍇<div class="aname">Saçma</div></div>
+            <div class="ammo-slot" onclick="selectAmmo(3)" data-ammo="3">🔥<div class="aname">Ateşli</div></div>
+            <div class="ammo-slot" onclick="selectAmmo(4)" data-ammo="4">💥<div class="aname">Bomba</div></div>
+          </div>
+        </div>
+        
+        <!-- Compass -->
+        <div class="compass" style="position:relative;margin-left:12px;">
+          <div class="compass-needle"></div>
+        </div>
+        
+        <!-- Weather indicator -->
+        <div id="weatherBtn" style="background:rgba(8,14,26,0.85);border:1px solid rgba(201,162,39,0.3);padding:8px 12px;text-align:center;margin-left:8px;cursor:pointer;" onclick="cycleWeather()">
+          <div id="weatherIcon" style="font-size:22px">☀️</div>
+          <div id="weatherText" style="font-size:9px;color:rgba(201,162,39,0.6);letter-spacing:1px;margin-top:4px">GÜNEŞLI</div>
+        </div>
+        
+        <!-- Sail control -->
+        <div class="sail-ctrl">
+          <div class="sail-label">⛵ YELKEN</div>
+          <input type="range" class="sail-slider" min="0" max="100" value="100" id="sailSlider" oninput="updateSailLabel(this.value)" orient="vertical">
+          <div style="font-size:9px;color:var(--gold);margin-top:4px" id="sailLabel">TAM YELKEN</div>
+        </div>
+        
+        <!-- Fire button -->
+        <button class="fire-btn" onclick="fireCannon()" id="fireBtn">
+          <span class="f-icon">💥</span>
+          ATEŞ!
+        </button>
+      </div>
+    </div>
+    
+    <!-- Battle powerups -->
+    <div id="powerupContainer" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);display:none;font-size:40px;cursor:pointer;animation:pulse 1s infinite" onclick="collectPowerup()" title="Güçlendirici topla!">⭐</div>
+  </div>
+  
+  <!-- Bottom bar -->
+  <div style="height:48px;background:rgba(5,10,20,0.98);border-top:1px solid rgba(201,162,39,0.2);display:flex;align-items:center;padding:0 16px;gap:12px;flex-shrink:0;">
+    <button class="btn-secondary" style="font-size:11px;padding:8px 14px;" onclick="showScreen('hub')">← GERİ DÖN</button>
+    <div style="font-size:12px;color:rgba(212,184,150,0.5);">Otomatik nişan <strong style="color:var(--gold)">AKTİF</strong></div>
+    <div style="margin-left:auto;display:flex;gap:12px;font-size:12px;">
+      <span>⏱️ <span id="battleTimer">00:00</span></span>
+      <span>💀 Öldürmeler: <span id="killCount" style="color:var(--gold)">0</span></span>
+    </div>
+    <button class="btn-secondary" style="font-size:11px;padding:8px 14px;border-color:rgba(201,162,39,0.3);" onclick="changeWeatherCycle()">🌤️ HAVA DEĞİŞTİR</button>
+  </div>
+</div>
+
+<!-- ===== UPGRADE SCREEN ===== -->
+<div id="screen-upgrade" class="screen">
+  <div class="screen-titlebar">
+    <button class="back-btn" onclick="showScreen('hub')">← GERİ</button>
+    <h2>⚙️ GEMİ TEZGAHI</h2>
+    <div style="margin-left:auto;display:flex;gap:12px;font-size:12px;">
+      <span>🪙 <strong id="upgradeGold" style="color:var(--gold)">250,000</strong></span>
+      <span>🪵 <strong id="upgradeWood" style="color:var(--gold)">150,000</strong></span>
+    </div>
+  </div>
+  <div class="upgrade-layout">
+    <div class="upgrade-categories">
+      <button class="upg-cat-btn active" onclick="selectUpgradeCategory('cannon',this)"><span class="cat-icon">💥</span>TOP GÜCÜ</button>
+      <button class="upg-cat-btn" onclick="selectUpgradeCategory('hull',this)"><span class="cat-icon">🛡️</span>GÖVDE</button>
+      <button class="upg-cat-btn" onclick="selectUpgradeCategory('sail',this)"><span class="cat-icon">⛵</span>YELKEN</button>
+      <button class="upg-cat-btn" onclick="selectUpgradeCategory('crew',this)"><span class="cat-icon">👥</span>TAYFA</button>
+      <button class="upg-cat-btn" onclick="selectUpgradeCategory('keel',this)"><span class="cat-icon">⚓</span>KİL</button>
+    </div>
+    <div class="upgrade-items" id="upgradeItems"></div>
+    <div class="ship-preview-right">
+      <div style="font-size:12px;font-weight:700;color:rgba(201,162,39,0.7);letter-spacing:2px;margin-bottom:8px;">GEMİ ÖNİZLEME</div>
+      <div class="ship-3d-view">
+        <div style="position:absolute;inset:0;background:linear-gradient(180deg,#0d2a4a,#061422);"></div>
+        <div style="position:relative;z-index:2;animation:shipBobSmall 3s ease-in-out infinite" id="upgradeShipSVG"></div>
+      </div>
+      <div class="ship-stats-list" id="upgradeStatsList">
+        <div class="stat-row"><span class="stat-icon">💥</span><span class="stat-name">TOP GÜCÜ</span><div class="stat-bar"><div class="stat-fill" style="width:40%;background:linear-gradient(90deg,#8b1a1a,#cc2222)"></div></div><span class="stat-val">40</span></div>
+        <div class="stat-row"><span class="stat-icon">🛡️</span><span class="stat-name">ZIRH</span><div class="stat-bar"><div class="stat-fill" style="width:55%;background:linear-gradient(90deg,#1a4a6b,#2a7aab)" id="upgHullBar"></div></div><span class="stat-val" id="upgHullVal">55</span></div>
+        <div class="stat-row"><span class="stat-icon">💨</span><span class="stat-name">HIZ</span><div class="stat-bar"><div class="stat-fill" style="width:30%;background:linear-gradient(90deg,#4a6a8a,#8aaac0)"></div></div><span class="stat-val">30</span></div>
+        <div class="stat-row"><span class="stat-icon">🎯</span><span class="stat-name">MENZİL</span><div class="stat-bar"><div class="stat-fill" style="width:35%;background:linear-gradient(90deg,#6a4a8a,#aa8ac0)"></div></div><span class="stat-val">35</span></div>
+        <div class="stat-row"><span class="stat-icon">🔥</span><span class="stat-name">ATEŞ HIZI</span><div class="stat-bar"><div class="stat-fill" style="width:20%;background:linear-gradient(90deg,#6a4a1a,#c08a2a)"></div></div><span class="stat-val">20</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== ARENA ===== -->
+<div id="screen-arena" class="screen">
+  <div class="arena-header">
+    <div class="arena-title-text">⚔️ ARENA</div>
+    <div class="wave-indicator">DALGA: <span id="arenaWave">0</span></div>
+    <div style="font-size:12px;color:rgba(212,184,150,0.6)">Düşman gücü dalgayla birlikte artar</div>
+    <div class="arena-loot-counter">
+      <div class="resource-chip"><span class="icon">🪙</span><span id="arenaGoldEarned">0</span></div>
+      <div class="resource-chip"><span class="icon">⚡</span><span id="arenaExpEarned">0</span></div>
+    </div>
+    <button class="arena-exit-btn" onclick="exitArena()">🚪 ARENADANI AYRIL</button>
+  </div>
+  
+  <!-- Arena battle area (reuses battle scene) -->
+  <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;padding:30px;">
+    <div style="text-align:center;">
+      <div style="font-family:'Cinzel Decorative',serif;font-size:28px;color:var(--red-bright);margin-bottom:8px;text-shadow:0 0 20px rgba(204,34,34,0.5)">⚔️ SAVAŞ ARENASI ⚔️</div>
+      <div style="font-family:'IM Fell English',serif;font-style:italic;font-size:15px;color:rgba(212,184,150,0.6)">Her dalga daha güçlü düşmanlar getirir. Ne kadar dayanabilirsin?</div>
+    </div>
+    
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;max-width:600px;width:100%;">
+      <div class="action-card" onclick="startArenaWave()">
+        <span class="ac-icon">⚡</span>
+        <div class="ac-title">DALGA BAŞLAT</div>
+        <div class="ac-sub">Sonraki düşmana hazır mısın?</div>
+      </div>
+      <div style="background:rgba(139,26,26,0.1);border:1px solid rgba(139,26,26,0.3);padding:20px;text-align:center;border-radius:3px;">
+        <span style="font-size:42px;display:block;margin-bottom:10px">🏆</span>
+        <div style="font-size:13px;font-weight:700;color:var(--red-bright);letter-spacing:1px;margin-bottom:4px">EN YÜKSEK DALGA</div>
+        <div style="font-family:'Cinzel Decorative',serif;font-size:28px;color:var(--gold-light)" id="arenaBestWave">7</div>
+      </div>
+      <div class="action-card" onclick="exitArena()">
+        <span class="ac-icon">💰</span>
+        <div class="ac-title">ÖDÜL AL & ÇIKIŞ</div>
+        <div class="ac-sub">Kazandıklarını topla</div>
+      </div>
+    </div>
+    
+    <div class="panel" style="width:100%;max-width:600px;">
+      <div class="panel-header"><span>📊</span><h3>ARENA İSTATİSTİKLERİ</h3></div>
+      <div class="panel-body" style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;text-align:center;">
+        <div><div style="font-size:10px;color:rgba(212,184,150,0.5);letter-spacing:2px">ÖLDÜRME</div><div style="font-family:'Cinzel Decorative',serif;font-size:24px;color:var(--gold-light)" id="arenaKills">0</div></div>
+        <div><div style="font-size:10px;color:rgba(212,184,150,0.5);letter-spacing:2px">HASAR</div><div style="font-family:'Cinzel Decorative',serif;font-size:24px;color:var(--red-bright)" id="arenaDealt">0</div></div>
+        <div><div style="font-size:10px;color:rgba(212,184,150,0.5);letter-spacing:2px">ALTIN</div><div style="font-family:'Cinzel Decorative',serif;font-size:24px;color:var(--gold)" id="arenaGoldDisp">0</div></div>
+        <div><div style="font-size:10px;color:rgba(212,184,150,0.5);letter-spacing:2px">EXP</div><div style="font-family:'Cinzel Decorative',serif;font-size:24px;color:var(--green-bright)" id="arenaExpDisp">0</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== TREASURE HUNT ===== -->
+<div id="screen-treasure" class="screen">
+  <div style="position:absolute;inset:0;background:radial-gradient(ellipse at center,rgba(60,30,10,0.4) 0%,transparent 70%)"></div>
+  <div class="treasure-container" style="position:relative;z-index:1">
+    <div class="screen-titlebar" style="background:transparent;border:none;padding:0;margin-bottom:16px;">
+      <button class="back-btn" onclick="showScreen('hub')">← GERİ</button>
+      <h2 style="font-size:20px;">🗝️ HAZİNE AVI</h2>
+    </div>
+    
+    <div class="treasure-header-area">
+      <p style="font-family:'IM Fell English',serif;font-style:italic;color:rgba(212,184,150,0.6);font-size:14px;margin-bottom:12px;">5x5 ızgara üzerinde hazine bul. Günde 1 kez!</p>
+      <div class="dig-info">
+        <span>⛏️ Kazma Hakkı: <strong id="digsLeft" style="color:var(--gold)">4</strong>/4</span>
+        <span>💰 Bulunan: <strong id="treasureFound" style="color:var(--gold-light)">0</strong></span>
+        <span>📅 <span id="huntStatus" style="color:var(--green-bright)">BUGÜN OYNANABİLİR</span></span>
+      </div>
+    </div>
+    
+    <div class="treasure-grid" id="treasureGrid"></div>
+    
+    <div style="display:flex;justify-content:center;gap:12px;flex-wrap:wrap;margin-top:8px;font-size:12px;">
+      <span>⬛ Boş</span>
+      <span style="color:#cd7f32">🟫 Bronz Sikke</span>
+      <span style="color:#aaa">⬜ Gümüş</span>
+      <span style="color:var(--gold)">🟨 Altın Torbası</span>
+      <span style="color:#aa44ff">🟪 Kraliyet Hazinesi</span>
+    </div>
+    
+    <div class="treasure-actions" style="margin-top:16px;">
+      <button class="btn-secondary" onclick="initTreasureGrid()">🔄 YENİLE (Yarın)</button>
+      <button class="btn-primary" onclick="showScreen('hub')">Tamamlandı ✓</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== DAILY CHALLENGE ===== -->
+<div id="screen-challenge" class="screen">
+  <div class="challenge-container">
+    <div class="screen-titlebar" style="background:transparent;border:none;padding:0;margin-bottom:16px;">
+      <button class="back-btn" onclick="showScreen('hub')">← GERİ</button>
+      <h2 style="font-size:18px;">⚡ GÜNLÜK MEYDAN OKUMA</h2>
+    </div>
+    
+    <div style="font-family:'IM Fell English',serif;font-style:italic;font-size:14px;color:rgba(212,184,150,0.6);margin-bottom:8px">
+      Bugünün özel modu:
+    </div>
+    <div class="challenge-modifier-badge" id="challengeName">ÇİFTE HASAR</div>
+    <div style="font-family:'IM Fell English',serif;font-size:14px;color:var(--text-parchment);margin-bottom:20px" id="challengeDesc">
+      Tüm top hasarları 2x — Ama geminiz de daha az dayanıklı!
+    </div>
+    
+    <div class="modifier-effects" id="modifierEffects">
+      <div class="mod-effect">💥 Top Hasarı<span class="eff-val buff">×2.0</span></div>
+      <div class="mod-effect">🛡️ Can<span class="eff-val nerf">×0.75</span></div>
+      <div class="mod-effect">💨 Hız<span class="eff-val buff">×1.0</span></div>
+      <div class="mod-effect">💰 Ödül<span class="eff-val buff">×2.0</span></div>
+    </div>
+    
+    <div style="background:rgba(40,160,66,0.08);border:1px solid rgba(40,160,66,0.3);padding:12px 16px;margin-bottom:20px;display:flex;align-items:center;gap:12px;">
+      <span style="font-size:24px">🏆</span>
+      <div>
+        <div style="font-size:12px;font-weight:700;color:var(--green-bright);letter-spacing:1px">ÖDÜLLER</div>
+        <div style="font-size:13px;margin-top:4px" id="challengeRewards">+2,000 Altın • +500 EXP • 🎁 Özel Sandık</div>
+      </div>
+    </div>
+    
+    <div style="display:flex;gap:12px;justify-content:center;">
+      <button class="btn-primary" onclick="startChallengeBattle()">⚡ MEYDAN OKU!</button>
+      <button class="btn-secondary" onclick="showScreen('hub')">Yarın Gel</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== SETTINGS ===== -->
+<div id="screen-settings" class="screen">
+  <div class="screen-titlebar">
+    <button class="back-btn" onclick="goBackFromSettings()">← GERİ</button>
+    <h2>⚙️ AYARLAR</h2>
+    <div class="version-badge" style="margin-left:auto;">v1.3.0</div>
+  </div>
+  
+  <div class="settings-layout">
+    <div class="settings-tabs">
+      <button class="settings-tab active" onclick="showSettingsTab('audio',this)">🔊 SES</button>
+      <button class="settings-tab" onclick="showSettingsTab('display',this)">🖥️ GÖRÜNTÜ</button>
+      <button class="settings-tab" onclick="showSettingsTab('language',this)">🌐 DİL</button>
+      <button class="settings-tab" onclick="showSettingsTab('account',this)">👤 HESAP</button>
+      <button class="settings-tab" onclick="showSettingsTab('changelog',this)">📋 SÜRÜM NOTLARI</button>
+    </div>
+    
+    <div class="settings-content">
+      <!-- Audio tab -->
+      <div id="settings-audio">
+        <div class="settings-section">
+          <h3>SES AYARLARI</h3>
+          <div class="setting-row">
+            <div class="setting-label">Müzik Ses Düzeyi<span>Arka plan müziği</span></div>
+            <div class="slider-control">
+              <input type="range" class="game-slider" id="musicSlider" min="0" max="100" value="40" oninput="updateSlider(this,'musicVal')">
+              <span class="slider-val" id="musicVal">40</span>
+            </div>
+          </div>
+          <div class="setting-row">
+            <div class="setting-label">Efekt Sesi<span>Top, su, patlama sesleri</span></div>
+            <div class="slider-control">
+              <input type="range" class="game-slider" id="sfxSlider" min="0" max="100" value="70" oninput="updateSlider(this,'sfxVal')">
+              <span class="slider-val" id="sfxVal">70</span>
+            </div>
+          </div>
+          <div class="setting-row">
+            <div class="setting-label">UI Sesi<span>Buton ve menü sesleri</span></div>
+            <div class="slider-control">
+              <input type="range" class="game-slider" min="0" max="100" value="60" oninput="updateSlider(this,'uiVal')">
+              <span class="slider-val" id="uiVal">60</span>
+            </div>
+          </div>
+          <div class="setting-row">
+            <div class="setting-label">Müzik Modu<span>Savaş / Keşif / Karışık</span></div>
+            <div style="display:flex;gap:8px;">
+              ${['SAVAŞ','KEŞİF','KARIŞIK'].map((m,i) => `<button onclick="this.parentElement.querySelectorAll('button').forEach(b=>b.style.borderColor='rgba(255,255,255,0.1)');this.style.borderColor='var(--gold)'" style="padding:6px 12px;background:rgba(255,255,255,0.04);border:1px solid ${i===2?'var(--gold)':'rgba(255,255,255,0.1)'};color:var(--text-parchment);font-family:'Cinzel',serif;font-size:11px;cursor:pointer;transition:all 0.2s;">${m}</button>`).join('')}
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Display tab -->
+      <div id="settings-display" class="hidden">
+        <div class="settings-section">
+          <h3>GÖRÜNTÜ AYARLARI</h3>
+          <div class="setting-row">
+            <div class="setting-label">Hava Efektleri<span>Yağmur, sis, fırtına görselleri</span></div>
+            <div class="toggle-switch on" onclick="this.classList.toggle('on')"><div class="toggle-knob"></div></div>
+          </div>
+          <div class="setting-row">
+            <div class="setting-label">Deniz Canavarları<span>Rastgele canavar çıkışları</span></div>
+            <div class="toggle-switch on" onclick="this.classList.toggle('on')"><div class="toggle-knob"></div></div>
+          </div>
+          <div class="setting-row">
+            <div class="setting-label">Hasar Sayıları<span>Savaşta hasar değerleri</span></div>
+            <div class="toggle-switch on" onclick="this.classList.toggle('on')"><div class="toggle-knob"></div></div>
+          </div>
+          <div class="setting-row">
+            <div class="setting-label">Gece/Gündüz Döngüsü<span>Zaman bazlı görsel değişim</span></div>
+            <div class="toggle-switch" onclick="this.classList.toggle('on')"><div class="toggle-knob"></div></div>
+          </div>
+          <div class="setting-row">
+            <div class="setting-label">Parçacık Efektleri<span>Patlama ve su sıçramaları</span></div>
+            <div class="toggle-switch on" onclick="this.classList.toggle('on')"><div class="toggle-knob"></div></div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Language tab -->
+      <div id="settings-language" class="hidden">
+        <div class="settings-section">
+          <h3>DİL SEÇİMİ</h3>
+          <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px;">
+            ${[
+              {code:'tr',name:'Türkçe',flag:'🇹🇷'},
+              {code:'en',name:'English',flag:'🇬🇧'},
+              {code:'de',name:'Deutsch',flag:'🇩🇪'},
+              {code:'fr',name:'Français',flag:'🇫🇷'},
+              {code:'es',name:'Español',flag:'🇪🇸'},
+              {code:'ru',name:'Русский',flag:'🇷🇺'},
+            ].map(l => `<button onclick="selectLanguage(this)" style="padding:14px;background:${l.code==='tr'?'rgba(201,162,39,0.1)':'rgba(255,255,255,0.03)'};border:1px solid ${l.code==='tr'?'var(--gold)':'rgba(255,255,255,0.08)'};color:var(--text-parchment);font-family:'Cinzel',serif;font-size:13px;cursor:pointer;transition:all 0.2s;border-radius:3px;display:flex;align-items:center;gap:10px;">
+              <span style="font-size:24px">${l.flag}</span>${l.name}
+            </button>`).join('')}
+          </div>
+        </div>
+      </div>
+      
+      <!-- Account tab -->
+      <div id="settings-account" class="hidden">
+        <div class="settings-section">
+          <h3>HESAP BİLGİLERİ</h3>
+          <div class="setting-row">
+            <div class="setting-label">Kaptan Adı<span>Eşsiz oyuncu kimliği</span></div>
+            <div style="display:flex;align-items:center;gap:10px;">
+              <span style="font-size:14px;font-weight:700;color:var(--gold-light)" id="settingsPlayerName">KAPTAN</span>
+            </div>
+          </div>
+          <div class="setting-row">
+            <div class="setting-label">Toplam Oyun Süresi</div>
+            <div style="font-size:13px;color:var(--text-parchment)">4s 32dk 17sn</div>
+          </div>
+          <div class="setting-row">
+            <div class="setting-label">Giriş Serisi</div>
+            <div style="font-size:13px;color:var(--gold)">🔥 5 Gün</div>
+          </div>
+        </div>
+        <div class="settings-section">
+          <h3>VERİ YÖNETİMİ</h3>
+          <div style="display:flex;gap:10px;flex-wrap:wrap;">
+            <button class="btn-secondary" style="font-size:12px;padding:10px 16px;">💾 Yedekle</button>
+            <button class="btn-secondary" style="font-size:12px;padding:10px 16px;">📤 Dışa Aktar</button>
+            <button class="btn-danger" style="font-size:12px;padding:10px 16px;" onclick="if(confirm('Tüm veriler silinecek! Emin misin?'))showToast('Veri sıfırlama iptal edildi','warning')">🗑️ Sıfırla</button>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Changelog tab -->
+      <div id="settings-changelog" class="hidden">
+        <div class="version-badge">v2.0.0 — KRAKEN'S WRATH UPDATE</div>
+        <div style="display:flex;flex-direction:column;gap:4px;">
+          <div class="changelog-item"><span class="cl-tag new">YENİ</span><span class="cl-text">Zindan Sistemi: 4 tam zindan — Lanetli Liman, Kraken Yuvası, Deniz Kalesi, Fırtına Denizi</span></div>
+          <div class="changelog-item"><span class="cl-tag new">YENİ</span><span class="cl-text">SVG Gemi Görselleri: Gemiler gerçek vektör sanatına dönüştü, upgrade ile görsel değişiyor!</span></div>
+          <div class="changelog-item"><span class="cl-tag new">YENİ</span><span class="cl-text">Web Audio Engine: Gerçek top sesi, patlama efektleri, ortam müziği — dosyasız!</span></div>
+          <div class="changelog-item"><span class="cl-tag new">YENİ</span><span class="cl-text">Battle Pass v1: 10 tier, ücretsiz + premium track, sezon geçişi</span></div>
+          <div class="changelog-item"><span class="cl-tag new">YENİ</span><span class="cl-text">Günlük Giriş Ödülleri: 7 günlük seri sistemi, otomatik kontrol</span></div>
+          <div class="changelog-item"><span class="cl-tag new">YENİ</span><span class="cl-text">Mürettebat & Evcil Hayvan ekranı: Aktif bonus sistemi ile crew yönetimi</span></div>
+          <div class="changelog-item"><span class="cl-tag new">YENİ</span><span class="cl-text">16 görev sistemi: Story zincirleri, zindan görevleri, günlük dönen görevler</span></div>
+          <div class="changelog-item"><span class="cl-tag imp">GELİŞTİRME</span><span class="cl-text">Güçlendirici sistemi: 6 farklı tür, gerçek etkileriyle (2x hasar, kalkan, vs.)</span></div>
+          <div class="changelog-item"><span class="cl-tag imp">GELİŞTİRME</span><span class="cl-text">Ekran sarsıntısı ve hasar animasyonları iyileştirildi</span></div>
+          <div class="changelog-item"><span class="cl-tag fix">DÜZELTME</span><span class="cl-text">Görev durumu localStorage'a kaydedilmiyor sorun giderildi</span></div>
+        </div>
+        
+        <div style="margin-top:24px;">
+          <div class="version-badge" style="opacity:0.5;">v1.3.0 — LEGENDS UPDATE</div>
+          <div style="display:flex;flex-direction:column;gap:4px;opacity:0.6;">
+            <div class="changelog-item"><span class="cl-tag new">YENİ</span><span class="cl-text">Kraken Boss savaşı eklendi</span></div>
+            <div class="changelog-item"><span class="cl-tag new">YENİ</span><span class="cl-text">Hazine Avı mini oyunu</span></div>
+            <div class="changelog-item"><span class="cl-tag imp">GELİŞTİRME</span><span class="cl-text">Hava durumu sistemi iyileştirildi</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== PROFILE ===== -->
+<div id="screen-profile" class="screen">
+  <div class="screen-titlebar">
+    <button class="back-btn" onclick="showScreen('hub')">← GERİ</button>
+    <h2>👤 PROFİL & BAŞARIMLAR</h2>
+  </div>
+  
+  <div class="profile-layout">
+    <div class="profile-card">
+      <div class="profile-avatar-big">⚓</div>
+      <div class="profile-name-display" id="profileName">KAPTAN</div>
+      <div class="profile-badges">
+        <span class="badge rank">Denizci</span>
+        <span class="badge level">Seviye <span id="profileLevel">12</span></span>
+      </div>
+      
+      <div class="profile-stats-mini">
+        <div class="ps-row"><span class="ps-label">Zafer</span><span class="ps-val" style="color:var(--green-bright)" id="profileWins">38</span></div>
+        <div class="ps-row"><span class="ps-label">Gemi Batırılan</span><span class="ps-val" id="profileKills">124</span></div>
+        <div class="ps-row"><span class="ps-label">Arena En İyi Dalga</span><span class="ps-val" id="profileBestWave">7</span></div>
+      </div>
+      
+      <div style="width:100%;margin-top:8px;">
+        <div style="font-size:10px;color:rgba(212,184,150,0.5);letter-spacing:2px;margin-bottom:6px">TOPLAM EXP</div>
+        <div style="height:8px;background:rgba(255,255,255,0.08);border-radius:4px;overflow:hidden">
+          <div style="width:65%;height:100%;background:linear-gradient(90deg,var(--gold-dark),var(--gold-light));border-radius:4px;"></div>
+        </div>
+        <div style="font-size:11px;color:var(--gold);margin-top:4px;text-align:right">6,500 / 10,000</div>
+      </div>
+    </div>
+    
+    <div class="profile-main">
+      <div class="panel">
+        <div class="panel-header"><span>🏆</span><h3>BAŞARIMLAR</h3><div style="margin-left:auto;font-size:11px;color:rgba(212,184,150,0.5)">5/24 Açıldı</div></div>
+        <div class="panel-body">
+          <div class="achievement-grid" id="achievementGrid"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== MODALS ===== -->
+
+<!-- Daily Reward Modal -->
+<div class="modal-overlay hidden" id="dailyRewardModal">
+  <div class="modal-box" style="max-width:560px;">
+    <button class="modal-close" onclick="closeModal('dailyRewardModal')">✕</button>
+    <h2>🎁 GÜNLÜK GİRİŞ ÖDÜLÜ</h2>
+    <p class="text-center text-small">Art arda giriş yaptıkça ödüller büyüyor!</p>
+    <div class="day-rewards-row" id="dayRewardsRow"></div>
+    <div style="text-align:center;background:rgba(201,162,39,0.08);border:1px solid rgba(201,162,39,0.3);padding:16px;margin-bottom:16px;">
+      <div style="font-size:36px;margin-bottom:8px">🪙</div>
+      <div style="font-family:'Cinzel Decorative',serif;font-size:28px;color:var(--gold-light)" id="todayRewardAmt">+500 Altın</div>
+      <div style="font-size:12px;color:rgba(212,184,150,0.6);margin-top:4px">3. Gün Ödülü</div>
+    </div>
+    <div style="text-align:center;">
+      <button class="btn-primary" onclick="claimDailyReward()">✨ ÖDÜLÜ AL</button>
+    </div>
+  </div>
+</div>
+
+<!-- Chest Opening Modal -->
+<div class="modal-overlay hidden" id="chestModal">
+  <div class="modal-box" style="text-align:center;">
+    <button class="modal-close" onclick="closeModal('chestModal')">✕</button>
+    <h2>📦 SANDIK AÇMA</h2>
+    <div class="chest-visual" id="chestVisual">📦</div>
+    <div class="rarity-bar" id="rarityBar"></div>
+    <div id="chestRewardArea" style="display:none;margin-top:16px;">
+      <div style="font-size:48px" id="chestRewardIcon">🪙</div>
+      <div style="font-family:'Cinzel Decorative',serif;font-size:24px;color:var(--gold-light);margin:8px 0" id="chestRewardName">Altın ×500</div>
+      <div id="chestRarityLabel" style="font-size:12px;letter-spacing:2px;padding:4px 16px;display:inline-block;border-radius:2px;">YAYGIN</div>
+    </div>
+    <div id="chestOpenBtn" style="margin-top:20px;">
+      <button class="btn-primary" onclick="openChest()">📦 SANDICI AÇ</button>
+    </div>
+  </div>
+</div>
+
+<!-- Collect All Quests Modal -->
+<div class="modal-overlay hidden" id="collectAllModal">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeModal('collectAllModal')">✕</button>
+    <h2>✨ GÖREV ÖDÜLLERİ TOPLANDI!</h2>
+    <div class="reward-grid" id="collectAllRewards"></div>
+    <div style="text-align:center;margin-top:16px;">
+      <button class="btn-primary" onclick="closeModal('collectAllModal')">Harika! 🎉</button>
+    </div>
+  </div>
+</div>
+
+<!-- Arena Exit Modal -->
+<div class="modal-overlay hidden" id="arenaExitModal">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeModal('arenaExitModal')">✕</button>
+    <h2>⚔️ ARENA ÖZET</h2>
+    <div class="reward-grid" id="arenaExitRewards"></div>
+    <div style="text-align:center;margin-top:16px;display:flex;gap:12px;justify-content:center;">
+      <button class="btn-primary" onclick="confirmArenaExit()">Ödülleri Al ✓</button>
+      <button class="btn-secondary" onclick="closeModal('arenaExitModal')">Devam Et</button>
+    </div>
+  </div>
+</div>
+
+<!-- Battle Victory Modal -->
+<div class="modal-overlay hidden" id="victoryModal">
+  <div class="modal-box" style="text-align:center;">
+    <h2 style="color:var(--gold-light);font-size:32px;">⚓ ZAFERİNİZ! ⚓</h2>
+    <div style="font-family:'IM Fell English',serif;font-style:italic;font-size:16px;color:rgba(212,184,150,0.7);margin:8px 0 20px">Düşman gemi bozguna uğratıldı!</div>
+    <div class="reward-grid" id="victoryRewards"></div>
+    <div style="display:flex;gap:12px;justify-content:center;margin-top:20px;">
+      <button class="btn-primary" onclick="closeModal('victoryModal');startBattle('normal')">Yeni Savaş ⚔️</button>
+      <button class="btn-secondary" onclick="closeModal('victoryModal');showScreen('hub')">Limana Dön 🏠</button>
+    </div>
+  </div>
+</div>
+
+<!-- Level Up Modal -->
+<div class="modal-overlay hidden" id="levelUpModal">
+  <div class="modal-box" style="text-align:center;">
+    <div style="font-size:14px;letter-spacing:4px;color:var(--gold);margin-bottom:8px">SEVİYE ATLADINIZ</div>
+    <div class="levelup-number" id="newLevelNum">13</div>
+    <div style="font-family:'Cinzel Decorative',serif;font-size:16px;color:var(--gold-light);margin:8px 0">KAPTAN SEVİYE 13</div>
+    <div style="font-family:'IM Fell English',serif;font-style:italic;color:rgba(212,184,150,0.6);margin-bottom:20px">Yeni içerik kilitleri açıldı!</div>
+    <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-bottom:20px;">
+      <div style="background:rgba(201,162,39,0.1);border:1px solid rgba(201,162,39,0.3);padding:10px 16px;font-size:12px;border-radius:2px;">⚔️ Yeni top türü açıldı</div>
+      <div style="background:rgba(201,162,39,0.1);border:1px solid rgba(201,162,39,0.3);padding:10px 16px;font-size:12px;border-radius:2px;">🛡️ Zırh geliştirme +1</div>
+    </div>
+    <button class="btn-primary" onclick="closeModal('levelUpModal')">Devam ⚓</button>
+  </div>
+</div>
+
+<!-- ===== DUNGEON SCREEN ===== -->
+<div id="screen-dungeon" class="screen">
+  <div class="screen-titlebar">
+    <button class="back-btn" onclick="showScreen('hub')">← GERİ</button>
+    <h2>🏴‍☠️ ZİNDANLAR</h2>
+    <div style="margin-left:auto;font-family:'IM Fell English',serif;font-style:italic;font-size:13px;color:rgba(212,184,150,0.5)">Karanlık sulara dal, efsane ödüller kazan</div>
+  </div>
+  <div id="dungeonList" class="dungeon-list"></div>
+</div>
+
+<!-- ===== BATTLE PASS SCREEN ===== -->
+<div id="screen-battlepass" class="screen">
+  <div class="screen-titlebar">
+    <button class="back-btn" onclick="showScreen('hub')">← GERİ</button>
+    <h2>🎖️ SEZON GEÇİŞİ</h2>
+  </div>
+  <div class="bp-header">
+    <div>
+      <div class="bp-season-title">1. SEZON — KRAKENE ÖFKE</div>
+      <div style="font-size:11px;color:rgba(212,184,150,0.4);margin-top:4px">Tier <span id="bpCurrentTier">4</span> • Aktif</div>
+    </div>
+    <div class="bp-exp-bar-wrap">
+      <div style="font-size:11px;color:rgba(212,184,150,0.5)" id="bpExpText">2,400 / 4,000 EXP</div>
+      <div class="bp-exp-bar-track">
+        <div class="bp-exp-fill" id="bpExpBar" style="width:60%"></div>
+      </div>
+    </div>
+    <button class="bp-premium-btn" onclick="showToast('Premium geliştirme yakında!','warning')">💎 PREMİUM AL — 800 Taş</button>
+  </div>
+  
+  <!-- Track headers -->
+  <div style="display:flex;gap:12px;padding:12px 20px 4px;flex-shrink:0;">
+    <div style="width:50px"></div>
+    <div style="flex:1;text-align:center;font-size:10px;letter-spacing:2px;color:rgba(212,184,150,0.5);padding:6px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:2px;">🆓 ÜCRETSIZ</div>
+    <div style="flex:1;text-align:center;font-size:10px;letter-spacing:2px;color:rgba(150,100,220,0.7);padding:6px;background:rgba(80,40,140,0.1);border:1px solid rgba(150,100,220,0.2);border-radius:2px;">👑 PREMİUM</div>
+  </div>
+  <div id="bpTiers" class="bp-tiers"></div>
+</div>
+
+<!-- ===== CREW SCREEN ===== -->
+<div id="screen-crew" class="screen">
+  <div class="screen-titlebar">
+    <button class="back-btn" onclick="showScreen('hub')">← GERİ</button>
+    <h2>👥 MÜRETTEBAT & EVCİL HAYVANLAR</h2>
+  </div>
+  <div style="flex:1;overflow-y:auto;padding:20px;display:flex;gap:20px;">
+    <div style="flex:1;">
+      <div class="panel" style="margin-bottom:16px;">
+        <div class="panel-header"><span>🎯</span><h3>MÜRETTEBAT</h3>
+          <div style="margin-left:auto;font-size:11px;color:rgba(212,184,150,0.4)">Aktif crew bonusları savaşta uygulanır</div>
+        </div>
+        <div class="panel-body" id="crewList"></div>
+      </div>
+    </div>
+    <div style="flex:1;">
+      <div class="panel">
+        <div class="panel-header"><span>🦜</span><h3>EVCİL HAYVANLAR</h3>
+          <div style="margin-left:auto;font-size:11px;color:rgba(212,184,150,0.4)">1 aktif evcil hayvan</div>
+        </div>
+        <div class="panel-body" id="petList"></div>
+      </div>
+      <div class="panel" style="margin-top:16px;">
+        <div class="panel-header"><span>💡</span><h3>BONUS BİLGİSİ</h3></div>
+        <div class="panel-body">
+          <div style="font-family:'IM Fell English',serif;font-style:italic;font-size:13px;color:rgba(212,184,150,0.6);line-height:1.7">
+            Mürettebatın bonusları savaş esnasında uygulanır.<br>
+            Papağan Rico altın ödüllerini %10 artırır.<br>
+            Maymun Max EXP kazanımını %15 artırır.<br>
+            Ekstra slot açmak için <span style="color:var(--gold)">💎 Taş</span> gerekir.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== NEW MODALS ===== -->
+
+<!-- Daily Login Modal -->
+<div class="modal-overlay hidden" id="dailyLoginModal">
+  <div class="modal-box" style="max-width:560px;">
+    <button class="modal-close" onclick="closeModal('dailyLoginModal')">✕</button>
+    <h2>🌅 HOŞGELDİN KAPTAN!</h2>
+    <p class="text-center text-small" style="margin-bottom:12px;">Art arda giriş yaptıkça ödüller büyüyor!</p>
+    <div class="login-day-grid" id="loginRewardGrid"></div>
+    <div style="background:rgba(201,162,39,0.06);border:1px solid rgba(201,162,39,0.25);padding:16px;text-align:center;margin:12px 0;border-radius:3px;">
+      <div style="font-size:11px;letter-spacing:3px;color:rgba(201,162,39,0.6);margin-bottom:8px"><span id="loginStreakNum">3</span>. GÜN SERÜVEN ÖDÜLÜ</div>
+      <div style="display:flex;justify-content:center;gap:20px;">
+        <div><div style="font-size:24px">🪙</div><div style="font-size:18px;font-weight:700;color:var(--gold-light)" id="loginRewardGold">+500</div><div style="font-size:10px;color:rgba(212,184,150,0.4)">ALTIN</div></div>
+        <div><div style="font-size:24px">⚡</div><div style="font-size:18px;font-weight:700;color:var(--green-bright)" id="loginRewardExp">+200</div><div style="font-size:10px;color:rgba(212,184,150,0.4)">EXP</div></div>
+        <div><div style="font-size:24px">💎</div><div style="font-size:18px;font-weight:700;color:#4a9fd4" id="loginRewardGems">+5</div><div style="font-size:10px;color:rgba(212,184,150,0.4)">TAŞ</div></div>
+      </div>
+    </div>
+    <div style="text-align:center;">
+      <button class="btn-primary" onclick="closeModal('dailyLoginModal')">⚓ DENIZLERE DEVAM</button>
+    </div>
+  </div>
+</div>
+
+<!-- Dungeon Info Modal -->
+<div class="modal-overlay hidden" id="dungeonInfoModal">
+  <div class="modal-box" style="max-width:480px;">
+    <button class="modal-close" onclick="closeModal('dungeonInfoModal')">✕</button>
+    <h2 id="dungeonModalName">🏴‍☠️ LANETLI LİMAN</h2>
+    <p class="text-small text-center" id="dungeonModalDesc" style="margin-bottom:16px;"></p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px;">
+      <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);padding:12px;border-radius:3px;text-align:center;">
+        <div style="font-size:10px;color:rgba(201,162,39,0.5);letter-spacing:2px;margin-bottom:6px">ZORLUK</div>
+        <div id="dungeonModalDiff" style="font-size:18px;">⚡⚡</div>
+      </div>
+      <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);padding:12px;border-radius:3px;text-align:center;">
+        <div style="font-size:10px;color:rgba(201,162,39,0.5);letter-spacing:2px;margin-bottom:6px">DALGA SAYISI</div>
+        <div style="font-family:'Cinzel Decorative',serif;font-size:24px;color:var(--gold-light)" id="dungeonModalWaves">3</div>
+      </div>
+      <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);padding:12px;border-radius:3px;text-align:center;">
+        <div style="font-size:10px;color:rgba(201,162,39,0.5);letter-spacing:2px;margin-bottom:6px">PATRON</div>
+        <div style="font-size:13px;color:var(--red-bright)" id="dungeonModalBoss">Kaptan İskelet</div>
+      </div>
+      <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);padding:12px;border-radius:3px;text-align:center;">
+        <div style="font-size:10px;color:rgba(201,162,39,0.5);letter-spacing:2px;margin-bottom:6px">ÖDÜLLER</div>
+        <div style="font-size:12px;color:var(--gold)">🪙 <span id="dungeonModalGold">3,000</span></div>
+        <div style="font-size:12px;color:#4a9fd4">💎 <span id="dungeonModalGems">50</span></div>
+      </div>
+    </div>
+    <div style="text-align:center;display:flex;gap:12px;justify-content:center;">
+      <button class="btn-primary" onclick="startDungeonBattle()">⚔️ ZINDANA GİR!</button>
+      <button class="btn-secondary" onclick="closeModal('dungeonInfoModal')">İptal</button>
+    </div>
+  </div>
+</div>
+
+<!-- Dungeon Next Wave Modal -->
+<div class="modal-overlay hidden" id="dungeonNextModal">
+  <div class="modal-box" style="text-align:center;max-width:380px;">
+    <h2>⚔️ DALGA TAMAMLANDI!</h2>
+    <div style="font-size:48px;margin:12px 0">🌊</div>
+    <div style="font-family:'IM Fell English',serif;font-style:italic;color:rgba(212,184,150,0.7);margin-bottom:16px">
+      Bir sonraki düşman sizi bekliyor...<br>
+      <span style="color:var(--gold)">Dalga <span id="dungeonNextWave">2</span> / <span id="dungeonTotalWaves">3</span></span>
+    </div>
+    <button class="btn-primary" onclick="closeModal('dungeonNextModal');startDungeonBattle()">İLERİ ⚔️</button>
+  </div>
+</div>
+
+<!-- Dungeon Complete Modal -->
+<div class="modal-overlay hidden" id="dungeonCompleteModal">
+  <div class="modal-box" style="text-align:center;">
+    <button class="modal-close" onclick="closeModal('dungeonCompleteModal');showScreen('dungeon')">✕</button>
+    <div style="font-size:48px;margin-bottom:8px">🏆</div>
+    <h2 style="color:var(--gold-light)">ZİNDAN TAMAMLANDI!</h2>
+    <div style="font-family:'IM Fell English',serif;font-style:italic;color:rgba(212,184,150,0.7);margin:8px 0 20px" id="dcDungeonName">Lanetli Liman</div>
+    <div style="font-size:24px;letter-spacing:4px;margin-bottom:16px;color:var(--gold)">⭐⭐⭐</div>
+    <div class="reward-grid" style="max-width:360px;margin:0 auto;">
+      <div class="reward-item"><span class="r-icon">🪙</span><div><div class="r-val" id="dcGold">+3,000</div><div class="r-label">ALTIN</div></div></div>
+      <div class="reward-item"><span class="r-icon">⚡</span><div><div class="r-val" id="dcExp">+1,500</div><div class="r-label">EXP</div></div></div>
+      <div class="reward-item"><span class="r-icon">💎</span><div><div class="r-val" id="dcGems">+50</div><div class="r-label">TAŞ</div></div></div>
+      <div class="reward-item"><span class="r-icon">🎁</span><div><div class="r-val">AÇILDI</div><div class="r-label">BAŞARIM</div></div></div>
+    </div>
+    <button class="btn-primary" style="margin-top:20px;" onclick="closeModal('dungeonCompleteModal');showScreen('dungeon')">Zindanlar ⚓</button>
+  </div>
+</div>
+
+<script src="game.js"></script>
+</body>
+</html>
